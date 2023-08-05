@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Sessions</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div class="container">
+<div class="table-responsive">
+  <h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a> / <a id="refth001" href="http://localhost:3000/schedules">xxxxxx</a> / sessions</h3>
+  <p>Transfer sessions.</p>
+  <table class="table align-middle" id="myTable">
+  </table>
+</div>
+</div>
+
+<script>
+
+let token = "{access_token}";
+
+const callAPI = async () => {
+
+	let scheduleName = "{schedule}";
+	
+	document.getElementById("refth001").innerHTML = scheduleName;
+	document.getElementById("refth001").setAttribute("href", "http://localhost:3000/schedules/" + scheduleName);
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/" + scheduleName + "/sessions";
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	/*let unnecessaryFields = [
+		"workspace",
+		"password",
+		"created",
+		"modified",
+		"keyPath"
+	];*/
+	
+	let unnecessaryFields = [
+		"workspace",
+		//"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget",
+		"status",
+		"displayOnWeb"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "id",
+			"to": "session ID"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	const myJson = await response.json();
+	
+	let objects = myJson["list"];
+	
+	if (objects.length > 0) {
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			let th = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				if (j == 5) {
+					let sessionId = obj["id"];
+					th += "<td><a class=\"btn\" href=\"http://localhost:3000/sessions/" + sessionId + "/items\">" + tvalue + "</a></td>";
+				} else if (j == 1) {
+					th += "<td><a href=\"http://localhost:3000/schedules/" + scheduleName + "/sessions/" + tvalue + "\">" + tvalue + "</a></td>";
+				} else {
+					th += "<td>" + tvalue + "</td>";
+				}
+				
+				
+			}
+			th = "<tr>" + th + "</tr>";
+			tbody += th;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		//console.log(tall);
+		document.getElementById("myTable").innerHTML = tall;
+	}
+}
+
+callAPI();
+
+</script>
+
+</body>
+
+</html>

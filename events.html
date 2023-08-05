@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Events</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div>
+
+
+
+
+
+
+
+
+
+	<div style="margin-left:75px;margin-right:75px; font-size:0.75em;">
+		<h3 id="head-schedule"> / <a href="http://localhost:3000/items-summary">events</a></h3>
+		<p>List of file transfer events. For transfer schedules, <a href="http://localhost:3000/schedules" class="link-primary">click here</a>.</p>
+		
+			
+			
+		<form>
+			
+			<table class="table" style="width:50%;">
+				<tr>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th>
+						<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_01" name="chb_01" checked>
+							<label id="lb_chb_01" for="chb_01">DEBUG</label>
+						</div>
+						<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_02" name="chb_02" checked>
+							<label id="lb_chb_02" for="chb_02">INFO</label>
+						</div>
+						<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_03" name="chb_03" checked>
+							<label id="lb_chb_03" for="chb_03">WARNING</label>
+						</div>
+						<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_04" name="chb_04" checked>
+							<label id="lb_chb_04" for="chb_04">ERROR</label>
+						</div>
+						<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_05" name="chb_05" checked>
+							<label id="lb_chb_05" for="chb_05">FATAL</label>
+						</div>
+					</th>
+					<th>
+						<div class="form-group">
+							<label for="f_search_source">Source: </label>
+							<input class="form-control" type="text" id="f_search_source" name="f_search_source"><br>
+							
+							<label for="f_search_description">Description: </label>
+							<input class="form-control" type="text" id="f_search_description" name="f_search_description">
+						</div>
+					</th>
+					<th></th>
+					<th></th>
+					<th></th>
+			  </tr>
+			</table>
+		
+			
+			<table class="table" style="width:50%;"><tr><th></th></tr></table>
+			
+			
+			
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio1" name="optradio" value="1" checked>
+				<label class="form-check-label" for="radio1">1 hour ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio2" name="optradio" value="4">
+				<label class="form-check-label" for="radio2">4 hours ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio3" name="optradio" value="12">
+				<label class="form-check-label" for="radio3">12 hours ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio4" name="optradio" value="24">
+				<label class="form-check-label" for="radio4">1 day ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio5" name="optradio" value="168">
+				<label class="form-check-label" for="radio5">1 week ago</label>
+			</div>
+			
+			<br/>
+			
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_use_lookback_custom_period" name="chb_use_lookback_custom_period" onclick="toggle_chb_use_lookback_custom_period();">
+				<label id="lb_chb_use_lookback_custom_period" for="chb_use_lookback_custom_period">Use Custom Period</label>
+			</div>
+			
+			<table class="table" style="width:50%;">
+				<tbody>
+					<tr>
+						<td>From: </td>
+						<td>
+							<input id="calendar_from" type="datetime-local" class="form-control" disabled="true"/>
+						</td>
+						<td>To: </td>
+						<td>
+							<input id="calendar_to" type="datetime-local" class="form-control" disabled="true"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			
+			
+			<button type="button" class="btn btn-primary" onclick="submit_request()" id="btn_submit" style="margin-bottom:25px; margin-left:0px;">Apply</button>
+			
+			<button type="button" class="btn" onclick="submit_request_left()" id="btn_submit_left" style="margin-bottom:25px; margin-left:0px;"><< previous page</button>
+			<button type="button" class="btn" onclick="submit_request_center()" id="btn_submit_center" style="margin-bottom:25px; margin-left:0px;"></button>
+			<button type="button" class="btn" onclick="submit_request_right()" id="btn_submit_right" style="margin-bottom:25px; margin-left:0px;">next page >></button>
+			
+		</form>
+		
+		<table class="table table-condensed table-hover" id="myTable" style="font-family: consolas;">
+		</table>
+	</div>
+</div>
+
+
+
+<script>
+
+let token = "{access_token}";
+
+
+let now = new Date();
+now.setMinutes(now.getMinutes() + 1);
+
+var oneHourPrior = new Date(now);
+oneHourPrior.setHours(now.getHours() - 1);
+
+document.getElementById("calendar_from").value = get_format_calendar(oneHourPrior);
+document.getElementById("calendar_to").value = get_format_calendar(now);
+
+inactive_pagination_buttons();
+
+function get_format_calendar(myDate) {
+	let year = myDate.getFullYear();
+	let month = ('0' + (myDate.getMonth() + 1)).slice(-2);
+	let day = ('0' + myDate.getDate()).slice(-2);
+	let hours = ('0' + myDate.getHours()).slice(-2);
+	let minutes = ('0' + myDate.getMinutes()).slice(-2);
+	return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+}
+
+function get_format_api(formatCalendar) {
+	let year = formatCalendar.substr(0, 4);
+	let month = formatCalendar.substr(5, 2);
+	let day = formatCalendar.substr(8, 2);
+	let hours = formatCalendar.substr(11, 2);
+	let minutes = formatCalendar.substr(14, 2);
+	return year + month + day + hours + minutes + "00";
+}
+
+function toggle_chb_use_lookback_custom_period() {
+	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
+		document.getElementById("calendar_from").disabled = false;
+		document.getElementById("calendar_to").disabled = false;
+		
+		document.getElementById("radio1").disabled = true;
+		document.getElementById("radio2").disabled = true;
+		document.getElementById("radio3").disabled = true;
+		document.getElementById("radio4").disabled = true;
+		document.getElementById("radio5").disabled = true;
+	} else {
+		document.getElementById("calendar_from").disabled = true;
+		document.getElementById("calendar_to").disabled = true;
+		
+		document.getElementById("radio1").disabled = false;
+		document.getElementById("radio2").disabled = false;
+		document.getElementById("radio3").disabled = false;
+		document.getElementById("radio4").disabled = false;
+		document.getElementById("radio5").disabled = false;
+	}
+}
+
+let callAPI = async (url_00) => {
+	
+	inactive_pagination_buttons();
+	document.getElementById("btn_submit").disabled = true;
+	inactive_pagination_buttons();
+	
+	
+	document.getElementById("myTable").innerHTML = "";
+	let response_00 = await fetch(url_00, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	
+	let myJsonx = await response_00.json();
+	
+	let myJson = JSON.parse(JSON.stringify(myJsonx));
+	
+	
+	
+	
+	let unnecessaryFields = [
+		"workspace",
+		//"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget",
+		
+		"fnCallback",
+		"fileNameArchive",
+		"folderArchive",
+		"folder",
+		"folderArchive",
+		//"description",
+		"timeNextRetry",
+		"timeLatestRetry",
+		"retryQuota",
+		"retryRemaining"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "description",
+			"to": "schedule"
+		},
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "item ID"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	
+	
+	let objects = myJson["events"];
+	
+	
+	
+	
+	
+	if (objects.length > 0) {
+	
+		setMaxPage(myJson["pagination"]["pagesTotal"]);
+		setCurrentPage(myJson["pagination"]["pageCurrent"]);
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		
+		
+		
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			
+			
+			
+			let myText = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				
+				let tmp_value = "<td>" + tvalue + "</td>";
+				
+				
+				myText += tmp_value;
+			}
+			let tb = "<tr>" + myText + "</tr>";
+			tbody += tb;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		document.getElementById("myTable").innerHTML = tall;
+	} else {
+		inactive_pagination_buttons();
+		alert("objects.length > 0 ---> false");
+	}
+	document.getElementById("btn_submit").disabled = false;
+	active_pagination_buttons();
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- pagination display begin
+
+let maxPage = -1;
+let pageNumber = 1;
+let pageSize = 30;
+
+function setMaxPage(_m) {
+	maxPage = _m;
+	document.getElementById("btn_submit_center").innerHTML = pageNumber + "/" + maxPage;
+}
+
+function setCurrentPage(_m) {
+	pageNumber = _m;
+	document.getElementById("btn_submit_center").innerHTML = pageNumber + "/" + maxPage;
+}
+
+function submit_request_left() {
+	pageNumber = pageNumber - 1;
+	if (pageNumber < 1) {
+		alert("Invalid page number (0).");
+		pageNumber = 1;
+		return;
+	}
+	submit_request();
+}
+
+function submit_request_center() {
+	submit_request();
+}
+
+function submit_request_right() {
+	if (maxPage < 0) {
+		return;
+	}
+	pageNumber = pageNumber + 1;
+	if (pageNumber > maxPage) {
+		alert("Invalid page number (" + pageNumber + ").");
+		pageNumber = maxPage;
+		return;
+	}
+	submit_request();
+}
+
+function active_pagination_buttons() {
+	document.getElementById("btn_submit_center").disabled = false;
+	document.getElementById("btn_submit_left").disabled = false;
+	document.getElementById("btn_submit_right").disabled = false;
+	
+	document.getElementById("btn_submit_center").style.visibility = "visible";
+	document.getElementById("btn_submit_left").style.visibility = "visible";
+	document.getElementById("btn_submit_right").style.visibility = "visible";
+}
+
+function inactive_pagination_buttons() {
+	document.getElementById("btn_submit_center").disabled = true;
+	document.getElementById("btn_submit_left").disabled = true;
+	document.getElementById("btn_submit_right").disabled = true;
+	
+	document.getElementById("btn_submit_center").style.visibility = "hidden";
+	document.getElementById("btn_submit_left").style.visibility = "hidden";
+	document.getElementById("btn_submit_right").style.visibility = "hidden";
+	
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- pagination display end
+
+function submit_request() {
+
+	
+	setMaxPage(-1);
+	
+	let t_api_from = "";
+	let t_api_to = "";
+	
+	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
+		
+		
+		t_api_from = get_format_api(document.getElementById("calendar_from").value);
+		t_api_to = get_format_api(document.getElementById("calendar_to").value);
+		
+		
+	
+	} else {
+	
+		// recalculate "now"
+		now = new Date();
+		now.setMinutes(now.getMinutes() + 1);
+	
+	
+	
+	
+		
+		let v1 = document.getElementsByName("optradio");
+		let nHours = -1;
+		for (let i = 0; i < v1.length; i++) {
+			if (v1[i].checked) {
+				nHours = v1[i].value;
+				break;
+			}
+		}
+		
+		if (nHours > 0) {
+		
+			let then = new Date(now);
+			
+			then.setSeconds(now.getSeconds() - 3600 * nHours);
+			
+			
+			t_api_from = get_format_api(get_format_calendar(then));
+			t_api_to = get_format_api(get_format_calendar(now));
+			
+			
+			
+		} else {
+			alert("nHours must be greater than 0.");
+		}
+	}
+	
+	if (t_api_from.length > 0 && t_api_to.length > 0) {
+		
+	} else {
+		return;
+	}
+	
+	// query url
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/events?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&time_start=" + t_api_from + "&time_stop=" + t_api_to;
+	
+	// Severities
+	let severities = "";
+	if (document.getElementById("chb_01").checked) { severities += document.getElementById("lb_chb_01").innerHTML + ","; }
+	if (document.getElementById("chb_02").checked) { severities += document.getElementById("lb_chb_02").innerHTML + ","; }
+	if (document.getElementById("chb_03").checked) { severities += document.getElementById("lb_chb_03").innerHTML + ","; }
+	if (document.getElementById("chb_04").checked) { severities += document.getElementById("lb_chb_04").innerHTML + ","; }
+	if (document.getElementById("chb_05").checked) { severities += document.getElementById("lb_chb_05").innerHTML + ","; }
+	severities = severities.substr(0, severities.length - 1);
+	severities = severities.toLowerCase();
+	if (severities.length > 0) {
+		url += "&severities=" + severities;
+	}
+	
+	// Source
+	let string_source = "" + document.getElementById("f_search_source").value;
+	if (string_source.length > 0) {
+		url += "&source=" + string_source;
+	}
+	
+	// Description
+	let string_description = "" + document.getElementById("f_search_description").value;
+	if (string_description.length > 0) {
+		url += "&description=" + string_description;
+	}
+	
+	callAPI(url);
+}
+
+
+</script>
+
+</body>
+
+</html>

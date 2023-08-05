@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Item</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div style="margin-left:50px;margin-right:50px;">
+
+	<div class="table-responsive">
+		<h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a> / <a id="refth001" href="http://localhost:3000/schedules">[Object object]</a> / <a id="refth002" href="http://localhost:3000/schedules">sessions</a> / <a id="refth003" href="http://localhost:3000/schedules">[Object object]</a> / <a id="refth004" href="http://localhost:3000/schedules">items</a> / <span id="refth005">[Object object]</span></h3>
+		<!--p>File Transfer schedules.</p-->
+	  
+		<table style="width:100%;font-size: 0.75em;" class="table align-middle" id="myTable">
+		</table>
+		
+		<button type="button" class="btn btn-primary" onclick="re_execute()" id="btn_re_execute" style="margin-bottom:25px; margin-left:0px; font-size: 0.75em;">Re-Execute</button>
+		
+		
+		<table id="log-table" class="table table-striped table-hover" style="font-size: 0.75em;">
+		</table>
+	</div>
+</div>
+
+
+
+<script>
+
+document.getElementById("btn_re_execute").style.visibility = "hidden";
+
+let token = "{access_token}";
+
+let session = "{session}";
+
+let item = "{item}";
+
+const re_execute = function() {
+
+	document.getElementById("btn_re_execute").disabled = true;
+
+	let r_code = -1;
+    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + token
+		}
+    }).then(response => {
+		//console.log('Response status code:', response.status);
+		r_code = response.status;
+		return response.json();
+	}).then(data => {
+		//console.log(data);
+		on_r_code(r_code, data);
+	}).catch(error => {
+		//console.error(error);
+		on_r_code(r_code, error);
+	});
+
+	//alert("123");
+}
+
+const on_r_code = function(r_code, r_tmp) {
+	if (r_code == 200) {
+		location.reload();
+	} else {
+		document.getElementById("btn_re_execute").disabled = false;
+		alert(r_tmp);
+	}
+}
+
+const callAPI = async () => {
+	
+	// get parent schedule
+	let url_00 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	const response_00 = await fetch(url_00, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	const myJson_00 = await response_00.json();
+	let schedule = myJson_00["schedule"];
+	
+	document.getElementById("refth001").innerHTML = schedule;
+	document.getElementById("refth001").setAttribute("href", "http://localhost:3000/schedules/" + schedule);
+	
+	document.getElementById("refth002").setAttribute("href", "http://localhost:3000/schedules/" + schedule + "/sessions");
+	
+	
+	document.getElementById("refth003").innerHTML = session;
+	document.getElementById("refth003").setAttribute("href", "http://localhost:3000/schedules/" + schedule + "/sessions/" + session);
+	
+	document.getElementById("refth004").setAttribute("href", "http://localhost:3000" + "/sessions/" + session + "/items");
+	
+	document.getElementById("refth005").innerHTML = item;
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session + "/items/" + item;
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	let unnecessaryFields = [
+		"workspace",
+		"session",
+		"name",
+		"description",
+		"modified",
+		"retryQuota",
+		"retryIntervalMs",
+		"fnCallback",
+		"fileNameArchive",
+		"folderArchive"
+	];
+	
+	const myJson = await response.json();
+	
+	let obj = myJson;
+	
+	let inner = "";
+	
+	
+	let fields = Object.keys(obj);
+	for (let i=0;i<fields.length;i++) {
+		let tkey = fields[i];
+		let tvalue = obj[tkey];
+		
+		// -------------------------------------------------------------------- //
+		// for 2023-06-21, remove some fields for presentation purpose
+		if (unnecessaryFields.includes(tkey)) {
+			continue;
+		}
+		// -------------------------------------------------------------------- //
+		
+
+		if (tvalue == "null") {
+			tvalue = "-";
+		}
+		if (tvalue == null) {
+			tvalue = "-";
+		}
+				
+				
+		if (tkey == "enabled") {
+			let th = "";
+			if (tvalue) {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ccffdd; color: #001600;\">enabled</span>";
+			} else {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ffddcc; color: #160000;\">disabled</span>";
+			}
+			inner += "<tr><th>" + tkey + ": </th><td>" + th + "</td></tr>";
+		} else {
+			inner += "<tr><th>" + tkey + ": </th><td>" + tvalue + "</td></tr>";
+		}
+		
+	}
+	
+	document.getElementById("btn_re_execute").style.visibility = "visible";
+	
+	document.getElementById("myTable").innerHTML = inner;
+}
+
+
+const retrive_item_logs = async () => {
+	let url_01 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items/" + item + "/logs";
+	
+	const response_01 = await fetch(url_01, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	let unnecessaryFields = [
+		"workspace",
+		//"created",
+		"item",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget",
+		
+		"fnCallback",
+		"fileNameArchive",
+		"folderArchive",
+		"folder",
+		"folderArchive",
+		"folderArchive",
+		"fileNameArchive",
+		"fileNameArchive",
+		"fileNameArchive",
+		"fileNameArchive"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "item ID"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	const myJson = await response_01.json();
+	
+	let objects = myJson["list"];
+	
+	if (objects.length > 0) {
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			let th = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (j == 4) {
+					// ------------------------------------------------------------------------------------ // beautify begin
+					// remove password
+					if (("" + tvalue).includes("], password[")) {
+						let fgmj = tvalue.split(", ");
+						let dfugh = "";
+						for (let mm = 0; mm < fgmj.length; mm++) {
+							if (!fgmj[mm].includes("password")) {
+								dfugh += fgmj[mm] + ", ";
+							}
+						}
+						tvalue = dfugh.substr(0, dfugh.length - 2);
+					}
+					
+					// remove ", keyPath[null]"
+					tvalue = ("" + tvalue).replace(", keyPath[null]", "");
+					
+					// some starts with "host["
+					if (("" + tvalue).startsWith("host[")) {
+						tvalue = "Connecting target: " + tvalue;
+					}
+					// ------------------------------------------------------------------------------------ // beautify end
+				}
+				
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				th += "<td>" + tvalue + "</td>";
+				
+			}
+			th = "<tr>" + th + "</tr>";
+			tbody += th;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		//console.log(tall);
+		document.getElementById("log-table").innerHTML = tall;
+	}
+}
+
+
+callAPI();
+retrive_item_logs();
+
+</script>
+
+</body>
+
+</html>

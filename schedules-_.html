@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Schedules</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+<div class="table-responsive">
+  <h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a></h3>
+  <p>File Transfer schedules.</p>
+  <button style="margin-bottom:5px;margin-left:5px;margin-right:1px;" type="button" class="btn btn-primary" onclick="location.href='http://localhost:3000/schedules/xxxxx/edit'" id="btn_edit">Edit</button>
+  <button id="btn_delete" style="margin-bottom:5px;" type="button" class="btn btn-danger" onclick="prompt_delete()">Delete</button>
+  <br/>
+	<table style="width:100%" class="table align-middle" id="myTable">
+	</table>
+  
+  <!--table class="table align-middle" id="myTable">
+  </table-->
+</div>
+</div>
+
+<script>
+
+let token = "{access_token}";
+
+let scheduleName = "{schedule}";
+
+const callAPI = async () => {
+
+	
+	
+	document.getElementById("head-schedule").innerHTML = " / <a href=\"http://localhost:3000/schedules" + "\">schedules</a> / " + scheduleName;
+	
+	document.getElementById("btn_edit").setAttribute("onclick", "location.href='http://localhost:3000/schedules/" + scheduleName + "/edit'");
+	
+	//document.getElementById("btn_edit").setAttribute("onclick", "alert('xxx')");
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/" + scheduleName;
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	let unnecessaryFields = [
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"previousCheckpoint",
+		"isPendingAdHoc"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "schedule name"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	const myJson = await response.json();
+	
+	let obj = myJson;
+	
+	let inner = "";
+	
+	
+	let fields = Object.keys(obj);
+	for (let i=0;i<fields.length;i++) {
+		let tkey = fields[i];
+		let tvalue = obj[tkey];
+		
+		// -------------------------------------------------------------------- //
+		// for 2023-06-21, remove some fields for presentation purpose
+		if (unnecessaryFields.includes(tkey)) {
+			continue;
+		}
+		// -------------------------------------------------------------------- //
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		if (tvalue == "null") {
+			tvalue = "-";
+		}
+		if (tvalue == null) {
+			tvalue = "-";
+		}
+				
+				
+		if (tkey == "enabled") {
+			let th = "";
+			if (tvalue) {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #4CAF50; color: white;\">enabled</span>";
+			} else {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ffddcc; color: #160000;\">disabled</span>";
+			}
+			inner += "<tr><th>" + tkey + ": </th><td>" + th + "</td></tr>";
+		} else if (tkey == "siteSource") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/sites/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "siteTarget") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/sites/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "name") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/schedules/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "fnIsFileToMove") {
+			inner += "<tr><th>" + tkey + ": </th><td style=\"font-family: consolas; background:#fbfbfb;\">" + tvalue + "</td></tr>";
+		} else if (tkey == "fnRenameTo") {
+			inner += "<tr><th>" + tkey + ": </th><td style=\"font-family: consolas; background:#fbfbfb;\">" + tvalue + "</td></tr>";
+		} else if (tkey == "sessions") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/schedules/" + scheduleName + "/sessions\">" + tvalue + "</a></td></tr>";
+		} else {
+			inner += "<tr><th>" + tkey + ": </th><td>" + tvalue + "</td></tr>";
+		}
+		
+	}
+	document.getElementById("myTable").innerHTML = inner;
+}
+
+callAPI();
+
+const prompt_delete = () => {
+
+	// btn_delete
+	document.getElementById("btn_delete").disabled = true;
+
+	let confirm_delete = confirm("Do you want to delete schedule \"" + scheduleName + "\"?");
+	if (confirm_delete) {
+	
+		let result_status_code = -1;
+		fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/' + scheduleName, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": "Bearer " + token
+			}
+		}).then(response => {
+			result_status_code = response.status;
+			console.log('Response status code:', response.status);
+			return response.json();
+		}).then(data => {
+			console.log(data);
+			
+			
+			if (199 < result_status_code && result_status_code < 300) {
+				location.href = "http://localhost:3000/schedules";
+			} else {
+				alert(data);
+				document.getElementById("btn_delete").disabled = false;
+			}
+			
+		}).catch(error => {
+			console.error(error);
+			alert(error);
+			document.getElementById("btn_delete").disabled = false;
+		});
+	
+		
+	} else {
+		document.getElementById("btn_delete").disabled = false;
+	}
+}
+
+</script>
+
+</body>
+
+</html>

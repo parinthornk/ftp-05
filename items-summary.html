@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Item</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div>
+
+
+
+
+
+
+
+
+
+	<div style="margin-left:75px;margin-right:75px; font-size:0.75em;">
+		<h3 id="head-schedule"> / <a href="http://localhost:3000/items-summary">items-summary</a></h3>
+		<p>List of file transfer items. For transfer schedules, <a href="http://localhost:3000/schedules" class="link-primary">click here</a>.</p>
+		
+			
+			
+		<form>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_01" name="chb_01" checked>
+				<label id="lb_chb_01" for="chb_01">CREATED</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_02" name="chb_02" checked>
+				<label id="lb_chb_02" for="chb_02">QUEUED</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_03" name="chb_03" checked>
+				<label id="lb_chb_03" for="chb_03">ERROR_ENQUEUE</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_04" name="chb_04" checked>
+				<label id="lb_chb_04" for="chb_04">DEQUEUED</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_05" name="chb_05" checked>
+				<label id="lb_chb_05" for="chb_05">EXECUTING</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_06" name="chb_06" checked>
+				<label id="lb_chb_06" for="chb_06">WAITING_FOR_RETRY</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_07" name="chb_07" checked>
+				<label id="lb_chb_07" for="chb_07">FAILED</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_08" name="chb_08" checked>
+				<label id="lb_chb_08" for="chb_08">SUCCESS</label>
+			</div>
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_09" name="chb_09" checked>
+				<label id="lb_chb_09" for="chb_09">DISMISS</label>
+			</div>
+			
+			<br/>
+			
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio1" name="optradio" value="1" checked>
+				<label class="form-check-label" for="radio1">1 hour ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio2" name="optradio" value="4">
+				<label class="form-check-label" for="radio2">4 hours ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio3" name="optradio" value="12">
+				<label class="form-check-label" for="radio3">12 hours ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio4" name="optradio" value="24">
+				<label class="form-check-label" for="radio4">1 day ago</label>
+			</div>
+			<div class="form-check">
+				<input type="radio" class="form-check-input" id="radio5" name="optradio" value="168">
+				<label class="form-check-label" for="radio5">1 week ago</label>
+			</div>
+			
+			<br/>
+			
+			<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_use_lookback_custom_period" name="chb_use_lookback_custom_period" onclick="toggle_chb_use_lookback_custom_period();">
+				<label id="lb_chb_use_lookback_custom_period" for="chb_use_lookback_custom_period">Use Custom Period</label>
+			</div>
+			
+			<table class="table" style="width:50%;">
+				<tbody>
+					<tr>
+						<td>From: </td>
+						<td>
+							<input id="calendar_from" type="datetime-local" class="form-control" disabled="true"/>
+						</td>
+						<td>To: </td>
+						<td>
+							<input id="calendar_to" type="datetime-local" class="form-control" disabled="true"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			
+			
+			<button type="button" class="btn btn-primary" onclick="submit_request()" id="btn_submit" style="margin-bottom:25px; margin-left:0px;">Apply</button>
+		</form>
+		
+		<table class="table table-condensed table-hover" id="myTable" style="font-family: consolas;">
+		</table>
+	</div>
+</div>
+
+
+
+<script>
+
+let token = "{access_token}";
+
+let now = new Date();
+now.setMinutes(now.getMinutes() + 1);
+
+var oneHourPrior = new Date(now);
+oneHourPrior.setHours(now.getHours() - 1);
+
+document.getElementById("calendar_from").value = get_format_calendar(oneHourPrior);
+document.getElementById("calendar_to").value = get_format_calendar(now);
+
+function get_format_calendar(myDate) {
+	let year = myDate.getFullYear();
+	let month = ('0' + (myDate.getMonth() + 1)).slice(-2);
+	let day = ('0' + myDate.getDate()).slice(-2);
+	let hours = ('0' + myDate.getHours()).slice(-2);
+	let minutes = ('0' + myDate.getMinutes()).slice(-2);
+	return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+}
+
+function get_format_api(formatCalendar) {
+	let year = formatCalendar.substr(0, 4);
+	let month = formatCalendar.substr(5, 2);
+	let day = formatCalendar.substr(8, 2);
+	let hours = formatCalendar.substr(11, 2);
+	let minutes = formatCalendar.substr(14, 2);
+	return year + month + day + hours + minutes + "00";
+}
+
+function toggle_chb_use_lookback_custom_period() {
+	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
+		document.getElementById("calendar_from").disabled = false;
+		document.getElementById("calendar_to").disabled = false;
+		
+		document.getElementById("radio1").disabled = true;
+		document.getElementById("radio2").disabled = true;
+		document.getElementById("radio3").disabled = true;
+		document.getElementById("radio4").disabled = true;
+		document.getElementById("radio5").disabled = true;
+	} else {
+		document.getElementById("calendar_from").disabled = true;
+		document.getElementById("calendar_to").disabled = true;
+		
+		document.getElementById("radio1").disabled = false;
+		document.getElementById("radio2").disabled = false;
+		document.getElementById("radio3").disabled = false;
+		document.getElementById("radio4").disabled = false;
+		document.getElementById("radio5").disabled = false;
+	}
+}
+
+let callAPI = async (url_00) => {
+
+	document.getElementById("btn_submit").disabled = true;
+	document.getElementById("myTable").innerHTML = "";
+	let response_00 = await fetch(url_00, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	
+	let myJsonx = await response_00.json();
+	
+	let myJson = JSON.parse(JSON.stringify(myJsonx));
+	
+	
+	
+	
+	let unnecessaryFields = [
+		"workspace",
+		//"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget",
+		
+		"fnCallback",
+		"fileNameArchive",
+		"folderArchive",
+		"folder",
+		"folderArchive",
+		//"description",
+		"timeNextRetry",
+		"timeLatestRetry",
+		"retryQuota",
+		"retryRemaining"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "description",
+			"to": "schedule"
+		},
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "item ID"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	
+	
+	let objects = myJson["list"];
+	
+	
+	
+	if (objects.length > 0) {
+		
+		
+		
+		
+		// load sessions, TODO
+		{
+			const response_01 = await fetch("https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules", {
+				method: 'GET',
+				headers: {
+					"Authorization": "Bearer " + token
+				}
+			});
+			const myJson_01 = await response_01.json();
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+	
+		
+		
+		
+	
+		// reverse??
+		objects.reverse();
+		
+		// re-order fields
+		{
+			for (let index_01 = 0; index_01 < objects.length; index_01++) {
+			
+				// create new object
+				let json_01 = JSON.parse(JSON.stringify(objects[index_01]));
+				
+				// get all fields
+				let fields_01 = Object.keys(json_01);
+				
+				let reo = [
+					"created", 
+					"description", 
+					"session", 
+				];
+				
+				let new_obj = JSON.parse("{}");
+				for (let i = 0; i < reo.length; i++) {
+					let fnam = reo[i];
+					let oldobj = objects[index_01];
+					new_obj[fnam] = oldobj[fnam];
+					
+				}
+				
+				
+				for (let i = 0; i < fields_01.length; i++) {
+					if (reo.includes(fields_01[i])) {
+						continue;
+					} else {
+						new_obj[fields_01[i]] = objects[index_01][fields_01[i]];
+					}
+				}
+				
+				// add re-execute column
+				new_obj["action"] = "re-execute";
+				
+				objects[index_01] = new_obj;
+				
+			}
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		// sample
+		let sample = objects[0];
+	
+		/*// delete unnecessary fields
+		{
+			for (let n = 0; n < objects.length; n++) {
+				for (let i = 0; i < unnecessaryFields.length; i++) {
+					delete objects[n][unnecessaryFields[i]];
+				}
+			}
+		}*/
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		
+		// remove unnecessary field, again ???
+		{
+			fields = fields.filter(m => !unnecessaryFields.includes(m));
+		}
+		
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		
+		
+		
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			
+			
+			// sessionId
+			let sessionId = obj["session"];
+			
+			// itemName
+			let itemName = obj["name"];
+			
+			// status
+			let status = obj["status"];
+			
+			// need re-execute?
+			let status_to_re_execute = ["WAITING_FOR_RETRY", "FAILED", "DISMISS", "CREATED", "ERROR_ENQUEUE"];
+			let need_re_execute = status_to_re_execute.includes(status);
+			
+			
+			
+			
+			let myText = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				
+				let tmp_value = "<td>" + tvalue + "</td>";
+				
+				if (j == 1) {
+					
+					// extract schedule_name from description
+					let tmp_description = tvalue;
+					let schedule_name = tmp_description.substring(0, tmp_description.length - ". [aa0f88c1ba214218a5a8f4284dabbd2d]".length);
+					schedule_name = schedule_name.substring("Auto-generated by schedule ".length, schedule_name.length);
+					
+					// link to schedule
+					tmp_value = "<td><a target=\"_blank\" href=\"http://localhost:3000/schedules/" + schedule_name + "\">" + schedule_name + "</a></td>";
+					
+				}
+				
+				if (j == 2) {
+					
+					// link to session
+					
+					
+				}
+				
+				if (j == 3) {
+					tmp_value = "<td><a target=\"_blank\" href=\"http://localhost:3000/sessions/" + sessionId + "/items/" + itemName + "\" style=\"font-family: consolas;\">" + tvalue + "</a></td>";
+				}
+				
+				if (j == 5 && need_re_execute) {
+					tmp_value =  "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"padding:3px 10px 3px 10px; color: rgb(156, 0, 6); background-color:rgb(255, 199, 206);;\">" + tvalue + "</span></td>";
+				}
+				
+				if (j == 6) {
+					if (need_re_execute) {
+						tmp_value = "<td><button type=\"button\" class=\"btn btn-primary\" style=\"padding:0px 5px 0px 5px; font-size:1.00em;\">re-execute</button></td>";
+					} else {
+						tmp_value = "<td>" + "-" + "</td>";
+					}
+					
+				}
+				
+				myText += tmp_value;
+			}
+			let tb = "<tr>" + myText + "</tr>";
+			tbody += tb;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		document.getElementById("myTable").innerHTML = tall;
+	} else {
+		alert("objects.length > 0 ---> false");
+	}
+	document.getElementById("btn_submit").disabled = false;
+}
+
+function submit_request() {
+
+	
+	
+	
+	let t_api_from = "";
+	let t_api_to = "";
+	
+	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
+		
+		
+		t_api_from = get_format_api(document.getElementById("calendar_from").value);
+		t_api_to = get_format_api(document.getElementById("calendar_to").value);
+		
+		
+	
+	} else {
+	
+		// recalculate "now"
+		now = new Date();
+		now.setMinutes(now.getMinutes() + 1);
+	
+	
+	
+	
+		
+		let v1 = document.getElementsByName("optradio");
+		let nHours = -1;
+		for (let i = 0; i < v1.length; i++) {
+			if (v1[i].checked) {
+				nHours = v1[i].value;
+				break;
+			}
+		}
+		
+		if (nHours > 0) {
+		
+			let then = new Date(now);
+			
+			then.setSeconds(now.getSeconds() - 3600 * nHours);
+			
+			
+			t_api_from = get_format_api(get_format_calendar(then));
+			t_api_to = get_format_api(get_format_calendar(now));
+			
+			
+			
+		} else {
+			alert("nHours must be greater than 0.");
+		}
+	}
+	
+	if (t_api_from.length > 0 && t_api_to.length > 0) {
+		
+	} else {
+		return;
+	}
+	
+	let arr_status = "";
+	if (document.getElementById("chb_01").checked) { arr_status += document.getElementById("lb_chb_01").innerHTML + ","; }
+	if (document.getElementById("chb_02").checked) { arr_status += document.getElementById("lb_chb_02").innerHTML + ","; }
+	if (document.getElementById("chb_03").checked) { arr_status += document.getElementById("lb_chb_03").innerHTML + ","; }
+	if (document.getElementById("chb_04").checked) { arr_status += document.getElementById("lb_chb_04").innerHTML + ","; }
+	if (document.getElementById("chb_05").checked) { arr_status += document.getElementById("lb_chb_05").innerHTML + ","; }
+	if (document.getElementById("chb_06").checked) { arr_status += document.getElementById("lb_chb_06").innerHTML + ","; }
+	if (document.getElementById("chb_07").checked) { arr_status += document.getElementById("lb_chb_07").innerHTML + ","; }
+	if (document.getElementById("chb_08").checked) { arr_status += document.getElementById("lb_chb_08").innerHTML + ","; }
+	if (document.getElementById("chb_09").checked) { arr_status += document.getElementById("lb_chb_09").innerHTML + ","; }
+	
+	arr_status = arr_status.substr(0, arr_status.length - 1);
+	arr_status = arr_status.toLowerCase();
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status;
+	
+	
+	callAPI(url);
+	
+}
+
+
+</script>
+
+</body>
+
+</html>

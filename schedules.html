@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <title>WTRANSFER | Schedules</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div style="margin-left:75px;margin-right:75px; font-size:0.75em;">
+	<h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a></h3>
+	<p>List of file transfer schedules. For items summary, <a href="http://localhost:3000/items-summary" class="link-primary">click here</a>.</p>
+	<p>For events, <a href="http://localhost:3000/events" class="link-primary">click here</a>.</p>
+	<button id="btn_add" class="btn btn-primary" onclick="location.href='http://localhost:3000/schedules-add'">Add New Schedule</button>
+	<div class="table-responsive">
+		<table class="table align-middle" id="myTable" style="width:100%;">
+		</table>
+	</div>
+</div>
+
+<script>
+
+
+document.getElementById("btn_add").style.visibility = "hidden";
+
+  // Get the modal and login form elements
+  const modal = document.getElementById("loginModal");
+  const loginForm = document.querySelector(".login-form");
+
+  // Function to open the modal
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+let token = "{access_token}";
+
+const callAPI = async () => {
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules";
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	/*let unnecessaryFields = [
+		"workspace",
+		"password",
+		"created",
+		"modified",
+		"keyPath"
+	];*/
+	
+	let unnecessaryFields = [
+		"workspace",
+		"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget",
+		"isPendingAdHoc"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "schedule"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "updated"
+		}
+	];
+	
+	const myJson = await response.json();
+	
+	let objects = myJson["list"];
+	
+	if (objects.length > 0) {
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			let th = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				if (j == 4) { // beautiful status enabled
+				
+					if (tvalue) {
+						//th += "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ccffdd; color: #001600;\">enabled</span></td>";
+						
+						th += "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #4CAF50; color:white;\">enabled</span></td>";
+					} else {
+						th += "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ffddcc; color: #160000;\">disabled</span></td>";
+					}
+					
+					
+				} else if (j == 2) { // link to schedule
+				
+					let scheduleName = obj["name"];
+					th += "<td><a href=\"http://localhost:3000/schedules/" + scheduleName + "\">" + tvalue + "</a></td>";
+					
+				} else if (j == 6) { // link to sessions
+					if (tvalue < 1) {
+						th += "<td><button type=\"button\" class=\"btn btn-link btn-rounded btn-sm fw-bold\" data-mdb-ripple-color=\"dark\">-</button></td>";
+					} else {
+					
+						// <a class="btn" href="">Link</a>
+						let scheduleName = obj["name"];
+						th += "<td><a class=\"btn\" href=\"http://localhost:3000/schedules/" + scheduleName + "/sessions\">" + tvalue + "</a></td>";
+						
+						
+						
+						//th += "<td><button type=\"button\" class=\"btn btn-link btn-rounded btn-sm fw-bold\" data-mdb-ripple-color=\"dark\">" + tvalue + "</button></td>";
+					}
+				} else {
+					th += "<td>" + tvalue + "</td>";
+				}
+			}
+			th = "<tr>" + th + "</tr>";
+			tbody += th;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		//console.log(tall);
+		document.getElementById("myTable").innerHTML = tall;
+	}
+	
+	document.getElementById("btn_add").style.visibility = "visible";
+}
+
+callAPI();
+
+</script>
+
+</body>
+
+</html>

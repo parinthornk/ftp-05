@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Sites</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div class="container">
+<div class="table-responsive">
+  <h2>Sites</h2>
+  <p></p>
+  <table class="table align-middle" id="myTable">
+  </table>
+</div>
+</div>
+
+<script>
+
+let token = "{access_token}";
+
+const callAPI = async () => {
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sites";
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	let unnecessaryFields = [
+		"workspace",
+		"password",
+		"created",
+		"modified",
+		"keyPath"
+	];
+	
+	/*let unnecessaryFields = [
+		"workspace",
+		"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget"
+	];*/
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "site name"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	const myJson = await response.json();
+	
+	let objects = myJson["list"];
+	
+	if (objects.length > 0) {
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		for (let i=0;i<objects.length;i++) {
+			let site = objects[i];
+			
+			let th = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = site[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				th += "<td>" + tvalue + "</td>";
+			}
+			th = "<tr>" + th + "</tr>";
+			tbody += th;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		//console.log(tall);
+		document.getElementById("myTable").innerHTML = tall;
+	}
+}
+
+callAPI();
+
+</script>
+
+</body>
+
+</html>

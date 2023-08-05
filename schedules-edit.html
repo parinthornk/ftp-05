@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Add Schedules</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<div class="container">
+	<h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a></h3>
+	<p>Edit transfer schedules.</p>
+	<!--button type="button" class="btn btn-primary">Create New Schedule</button-->
+	
+	
+	<div class="table-responsive">
+		<table class="table align-middle" id="myTable">
+		</table>
+	</div>
+</div>
+
+
+
+<div class="container">
+  <h2 id="h2_title">Edit Schedule</h2>
+  <!--form action="/action_page.php"-->
+	<br/>
+	
+	
+	
+	<div id="div_panel">
+    <div class="form-group"><label>Schedule Name</label><input type="text" class="form-control" id="schedule_name" placeholder="schedule name"></div>
+	<div class="form-group"><label>Description</label><input type="text" class="form-control" id="schedule_description" placeholder="schedule description"></div>
+	<div class="checkbox"><label><input type="checkbox" id="schedule_enabled" checked>Activate Schedule</label></div>
+	<br/>
+	
+	
+    <div class="form-group"><label>Source Server</label><input type="text" class="form-control" id="source_server" placeholder="source server"></div>
+    <div class="form-group"><label>Source Directory</label><input type="text" class="form-control" id="source_folder" placeholder="source directory"></div>
+    <div class="form-group"><label>Source FN_isFileToTransfer</label><input type="text" class="form-control" id="source_fn_isFileToMove" placeholder="JavaScript code for files selection" value="function(x){return x.toLowerCase().endsWith(&quot;.csv&quot;) || x.toLowerCase().endsWith(&quot;.xlsx&quot;) || x.toLowerCase().endsWith(&quot;.txt&quot;);}" style="font-family: Consolas;background-color: #f4f4ff;"></div>
+	<br/>
+	
+    <div class="form-group"><label>Target Server</label><input type="text" class="form-control" id="target_server" placeholder="target server"></div>
+    <div class="form-group"><label>Target Directory</label><input type="text" class="form-control" id="target_folder" placeholder="target directory"></div>
+	<br/>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<button id="btn_update" class="btn btn-primary" onclick="callAPI()">Update</button>
+    <button id="btn_cancel" class="btn btn-default" onclick="location.href='http://localhost:3000/schedules'">Cancel</button>
+	
+  </form>
+</div>
+<script>
+
+document.getElementById("btn_update").disabled = true;
+setDivDisable("div_panel", true);
+
+let token = "{access_token}";
+
+let scheduleName = "{schedule}";
+
+document.getElementById("h2_title").innerHTML = "Edit Schedule";
+document.getElementById("head-schedule").innerHTML = " / <a href=\"http://localhost:3000/schedules" + "\">schedules</a> / " + scheduleName;
+
+document.getElementById("btn_cancel").setAttribute("onclick", "location.href='http://localhost:3000/schedules/" + scheduleName + "'");
+
+const loadData = async () => {
+
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/" + scheduleName;
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	const myJson = await response.json();
+	document.getElementById("schedule_name").value = myJson["name"];
+	
+	
+	document.getElementById("schedule_description").value = myJson["description"];
+	
+	document.getElementById("schedule_enabled").checked = myJson["enabled"];
+
+	document.getElementById("source_server").value = myJson["siteSource"];
+	document.getElementById("source_folder").value = myJson["staticDirSource"];
+	
+	document.getElementById("source_fn_isFileToMove").value = myJson["fnIsFileToMove"];
+	
+	document.getElementById("target_server").value = myJson["siteTarget"];
+	document.getElementById("target_folder").value = myJson["staticDirTarget"];
+	
+	
+	document.getElementById("btn_update").disabled = false;
+	setDivDisable("div_panel", false);
+	
+	document.getElementById("schedule_name").disabled = true;
+}
+
+function setDivDisable(div_panel, status) {
+	let nodes = document.getElementById(div_panel).getElementsByTagName('*'); for (let i = 0; i < nodes.length; i++){nodes[i].disabled = status;}
+}
+
+function callAPI() {
+	
+	document.getElementById("btn_update").disabled = true;
+	setDivDisable("div_panel", true);
+	
+	
+
+	const requestData = {
+		"siteSource": document.getElementById("source_server").value,
+		"staticDirSource": document.getElementById("source_folder").value,
+		"siteTarget": document.getElementById("target_server").value,
+		"staticDirTarget": document.getElementById("target_folder").value,
+		"fnIsFileToMove": document.getElementById("source_fn_isFileToMove").value,
+		"name": document.getElementById("schedule_name").value,
+		"description": document.getElementById("schedule_description").value,
+		"enabled": document.getElementById("schedule_enabled").checked
+	};
+	
+	let result_status_code = -1;
+    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/' + scheduleName + '/patching', {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + token
+		},
+		body: JSON.stringify(requestData)
+    }).then(response => {
+		result_status_code = response.status;
+		console.log('Response status code:', response.status);
+		return response.json();
+	}).then(data => {
+		console.log(data);
+		
+		if (199 < result_status_code && result_status_code < 300) {
+			location.href = "http://localhost:3000/schedules/" + scheduleName;
+		} else {
+			alert(data);
+			document.getElementById("btn_update").disabled = false;
+			setDivDisable("div_panel", false);
+		}
+		
+	}).catch(error => {
+		console.error(error);
+		alert(error);
+		document.getElementById("btn_update").disabled = false;
+		setDivDisable("div_panel", false);
+	});
+}
+
+loadData();
+</script>
+
+</body>
+
+</html>
