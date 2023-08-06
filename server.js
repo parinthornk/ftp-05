@@ -8,9 +8,9 @@ const https = require('http');
 let fs = require('fs');
 
 // ---------------------------------------------------------------------------------------- read host begin
-let host_digital_ocean = "service-8b6d45499-bswqs";
+
 let host = require("os").hostname();
-if (host == host_digital_ocean) {
+if (host.startsWith("service-")) {
 	url_ref = "https://squid-app-o8e56.ondigitalocean.app";
 } else {
 	url_ref = "http://localhost:3000"
@@ -18,7 +18,7 @@ if (host == host_digital_ocean) {
 
 function replace_url_ref (_m) {
 	let __m = _m;
-	if (host == host_digital_ocean) {
+	if (host.startsWith("service-")) {
 		while (__m.includes("http://localhost:3000")) {
 			__m = __m.replace("http://localhost:3000", "https://squid-app-o8e56.ondigitalocean.app");
 		}
