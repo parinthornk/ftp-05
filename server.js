@@ -80,6 +80,16 @@ var get_token = function(callback, error) {
 // favicon
 app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
 
+
+app.get('/host', (req, response) => {
+	response.setHeader('Content-Type', 'application/json');
+	response.status(200);
+	response.end(JSON.stringify({
+		"host": require("os").hostname()
+	}));
+});
+
+
 // start
 app.all('/sites', (req, response) => {
 	
