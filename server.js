@@ -7,6 +7,27 @@ const https = require('http');
 
 let fs = require('fs');
 
+// ---------------------------------------------------------------------------------------- read host begin
+let host_digital_ocean = "service-8b6d45499-bswqs";
+let host = require("os").hostname();
+if (host == host_digital_ocean) {
+	url_ref = "https://squid-app-o8e56.ondigitalocean.app";
+} else {
+	url_ref = "http://localhost:3000"
+}
+
+function replace_url_ref (_m) {
+	let __m = _m;
+	if (host == host_digital_ocean) {
+		while (__m.includes("http://localhost:3000")) {
+			__m = __m.replace("http://localhost:3000", "https://squid-app-o8e56.ondigitalocean.app");
+		}
+	}
+	return __m;
+}
+
+// ---------------------------------------------------------------------------------------- read host end
+
 var generate_new_token = function (callback, error) {
 	require('request').post("https://orapi-dev.orplc.com/oauth2/token", {
 		headers: {
@@ -80,15 +101,15 @@ var get_token = function(callback, error) {
 // favicon
 app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
 
-
+// get host
 app.get('/host', (req, response) => {
 	response.setHeader('Content-Type', 'application/json');
 	response.status(200);
 	response.end(JSON.stringify({
-		"host": require("os").hostname()
+		"host": host,
+		"url_ref": url_ref
 	}));
 });
-
 
 // start
 app.all('/sites', (req, response) => {
@@ -99,6 +120,7 @@ app.all('/sites', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -124,6 +146,7 @@ app.all('/schedules', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -149,6 +172,7 @@ app.all('/schedules-add', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -174,6 +198,7 @@ app.all('/schedules/:schedule/edit', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				console.log(data_with_token);
@@ -201,6 +226,7 @@ app.all('/schedules/:schedule', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
@@ -229,6 +255,7 @@ app.all('/schedules/:schedule/sessions', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
@@ -257,6 +284,7 @@ app.all('/events', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
@@ -283,6 +311,7 @@ app.all('/sessions/:session/items', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
@@ -311,6 +340,7 @@ app.all('/sessions/:session/items/:item', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				data_with_token = data_with_token.replace("{item}", req.params.item);
 				
@@ -340,6 +370,7 @@ app.all('/items-summary', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
@@ -366,6 +397,7 @@ app.all('/schedules/:schedule/sessions/:session', (req, response) => {
 		if (!err) {
 			get_token((token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
