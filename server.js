@@ -111,6 +111,61 @@ app.get('/host', (req, response) => {
 	}));
 });
 
+
+
+
+
+
+
+
+
+
+
+function json2string(json) {
+	return JSON.stringify(json, null, "  ");
+}
+
+app.get('/hello', (req, res) => {
+	res.setHeader('Content-Type', 'application/json');
+	res.status(200);
+	res.end(json2string({
+		"message": "Hello!"
+	}));
+});
+
+app.all('/echo/*', echo);
+
+app.all('/echo', echo);
+
+function echo(req, res) {
+	console.log("request.socket.remoteAddress: " + req.socket.remoteAddress);
+	res.setHeader('Content-Type', 'application/json');
+	res.status(200);
+	var textres = json2string({
+		"method": req.method,
+		"headers": req.headers,
+		"query": req.query,
+		"path": req.path,
+		"baseUrl": req.baseUrl,
+		"originalUrl": req.originalUrl,
+		"bodyRaw": String.fromCharCode.apply(null, req.body)
+	});
+	console.log("----------------------------------------------------");
+	console.log(textres);
+	console.log("----------------------------------------------------");
+	res.end(textres);
+}
+
+
+
+
+
+
+
+
+
+
+
 // start
 app.all('/sites', (req, response) => {
 	
