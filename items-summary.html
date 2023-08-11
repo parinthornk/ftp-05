@@ -59,6 +59,12 @@
 			
 			<br/>
 			
+			<div class="form-group" style="width:20%;">
+				<label for="f_search_schedule">Schedule: </label>
+				<input class="form-control" type="text" id="f_search_schedule" name="f_search_schedule"><br>
+			</div>
+			
+			
 			<div class="form-check">
 				<input type="radio" class="form-check-input" id="radio1" name="optradio" value="1" checked>
 				<label class="form-check-label" for="radio1">1 hour ago</label>
@@ -104,6 +110,10 @@
 			
 			
 			<button type="button" class="btn btn-primary" onclick="submit_request()" id="btn_submit" style="margin-bottom:25px; margin-left:0px;">Apply</button>
+			
+			<h4 id="total_text"></h4>
+			
+			
 		</form>
 		
 		<table class="table table-condensed table-hover" id="myTable" style="font-family: consolas;">
@@ -125,6 +135,12 @@ oneHourPrior.setHours(now.getHours() - 1);
 
 document.getElementById("calendar_from").value = get_format_calendar(oneHourPrior);
 document.getElementById("calendar_to").value = get_format_calendar(now);
+
+function set_total_items (total) {
+	document.getElementById("total_text").innerHTML = total;
+}
+
+set_total_items("");
 
 function get_format_calendar(myDate) {
 	let year = myDate.getFullYear();
@@ -254,7 +270,7 @@ let callAPI = async (url_00) => {
 	if (objects.length > 0) {
 		
 		
-		
+		set_total_items("Total: " + objects.length);
 		
 		// load sessions, TODO
 		{
@@ -466,7 +482,7 @@ let callAPI = async (url_00) => {
 function submit_request() {
 
 	
-	
+	set_total_items("");
 	
 	let t_api_from = "";
 	let t_api_to = "";
@@ -535,7 +551,13 @@ function submit_request() {
 	arr_status = arr_status.substr(0, arr_status.length - 1);
 	arr_status = arr_status.toLowerCase();
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status;
+	//
+	let text_query_description = "" + document.getElementById("f_search_schedule").value;
+	if (text_query_description.length > 0) {
+		text_query_description = "&description=" + text_query_description;
+	}
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description;
 	
 	
 	callAPI(url);
