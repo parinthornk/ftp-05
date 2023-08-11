@@ -64,6 +64,11 @@
 				<input class="form-control" type="text" id="f_search_schedule" name="f_search_schedule"><br>
 			</div>
 			
+			<div class="form-group" style="width:20%;">
+				<label for="f_search_file_name">File Name: </label>
+				<input class="form-control" type="text" id="f_search_file_name" name="f_search_file_name"><br>
+			</div>
+			
 			
 			<div class="form-check">
 				<input type="radio" class="form-check-input" id="radio1" name="optradio" value="1" checked>
@@ -557,7 +562,12 @@ function submit_request() {
 		text_query_description = "&description=" + text_query_description;
 	}
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description;
+	let text_query_file_name = "" + document.getElementById("f_search_file_name").value;
+	if (text_query_file_name.length > 0) {
+		text_query_file_name = "&file_name=" + text_query_file_name;
+	}
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description + text_query_file_name;
 	
 	
 	callAPI(url);
