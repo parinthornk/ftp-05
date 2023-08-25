@@ -17,6 +17,7 @@
   <h3 id="head-schedule"> / <a href="http://localhost:3000/schedules">schedules</a></h3>
   <p>File Transfer schedules.</p>
   <button style="margin-bottom:5px;margin-left:5px;margin-right:1px;" type="button" class="btn btn-primary" onclick="location.href='http://localhost:3000/schedules/xxxxx/edit'" id="btn_edit">Edit</button>
+  <button id="btn_upload_example" style="margin-bottom:5px;" type="button" class="btn btn-default" onclick="prompt_upload_example()">Upload Example File</button>
   <button id="btn_delete" style="margin-bottom:5px;" type="button" class="btn btn-danger" onclick="prompt_delete()">Delete</button>
   <br/>
 	<table style="width:100%" class="table align-middle" id="myTable">
@@ -193,6 +194,41 @@ const prompt_delete = () => {
 		
 	} else {
 		document.getElementById("btn_delete").disabled = false;
+	}
+}
+
+const prompt_upload_example = () => {
+	document.getElementById("btn_upload_example").disabled = true;
+	let confirm_upload = confirm("Do you want to upload example file to schedule \"" + scheduleName + "\"?");
+	if (confirm_upload) {
+		let result_status_code = -1;
+		fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/' + scheduleName + '/example_file', {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + token
+			},
+			body: JSON.stringify({
+				"message": "empty"
+			})
+		}).then(response => {
+			result_status_code = response.status;
+			return response.json();
+		}).then(data => {
+			console.log(data);
+			if (199 < result_status_code && result_status_code < 300) {
+				location.href = "http://localhost:3000/schedules/" + scheduleName;
+			} else {
+				alert(data);
+				document.getElementById("btn_upload_example").disabled = false;
+			}
+		}).catch(error => {
+			alert(error);
+			document.getElementById("btn_upload_example").disabled = false;
+		});
+		
+	} else {
+		document.getElementById("btn_upload_example").disabled = false;
 	}
 }
 
