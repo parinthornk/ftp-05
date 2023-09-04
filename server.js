@@ -13,28 +13,32 @@ let envsCfg = [
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
-		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602"
+		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602",
+		"backgroundColor": "#c8ffff"
 	},
 	{
 		"name": "qas",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "SlZhVU9acTU5RkJtU1FrbEdsSV9lS2QzWWNzYTpDQ0RNOTNwSW1yRjRCTks1Z1Z5dEdFTG9RTm9h",
-		"scope": "49fca1f2-42cb-4815-9277-d8efe1c21129"
+		"scope": "49fca1f2-42cb-4815-9277-d8efe1c21129",
+		"backgroundColor": "#fff9e0"
 	},
 	{
 		"name": "uat",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "xxxx",
-		"scope": "992dc9f2-4d5c-4738-bda4-6282ebdfadf8"
+		"scope": "992dc9f2-4d5c-4738-bda4-6282ebdfadf8",
+		"backgroundColor": "#e2ffe1"
 	},
 	{
 		"name": "prd",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "xxxx",
-		"scope": "526a3f6b-79c2-4b9e-a463-25dafd112e16"
+		"scope": "526a3f6b-79c2-4b9e-a463-25dafd112e16",
+		"backgroundColor": "#ffffff"
 	}
 ];
 
@@ -74,6 +78,15 @@ function env_get_scope (env) {
 	return undefined;
 }
 
+function env_get_backgroundColor (env) {
+	for (let i = 0; i < envsCfg.length; i++) {
+		if (envsCfg[i]["name"] == env) {
+			return envsCfg[i]["backgroundColor"];
+		}
+	}
+	return undefined;
+}
+
 // ---------------------------------------------------------------------------------------- read host begin
 
 let host = require("os").hostname();
@@ -100,6 +113,7 @@ function replace_url_ref (env, _m) {
 			__m = __m.replace("http://localhost:3000", "https://squid-app-o8e56.ondigitalocean.app");
 		}
 	}
+	__m = __m.replaceAll("{replace_with_bgcolor}", env_get_backgroundColor(env));
 	return __m.replaceAll("http://localhost:3000", "http://localhost:3000/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app", "https://squid-app-o8e56.ondigitalocean.app/" + env);
 }
 
