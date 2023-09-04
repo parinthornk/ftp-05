@@ -14,7 +14,7 @@ let envsCfg = [
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
 		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602",
-		"backgroundColor": "#c8ffff"
+		"backgroundColor": "#e0ffff"
 	},
 	{
 		"name": "qas",
