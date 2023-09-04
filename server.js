@@ -7,6 +7,73 @@ const https = require('http');
 
 let fs = require('fs');
 
+let envsCfg = [
+	{
+		"name": "dev",
+		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
+		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
+		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
+		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602"
+	},
+	{
+		"name": "qas",
+		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
+		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
+		"basicAuth": "SlZhVU9acTU5RkJtU1FrbEdsSV9lS2QzWWNzYTpDQ0RNOTNwSW1yRjRCTks1Z1Z5dEdFTG9RTm9h",
+		"scope": "49fca1f2-42cb-4815-9277-d8efe1c21129"
+	},
+	{
+		"name": "uat",
+		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
+		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
+		"basicAuth": "xxxx",
+		"scope": "992dc9f2-4d5c-4738-bda4-6282ebdfadf8"
+	},
+	{
+		"name": "prd",
+		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
+		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
+		"basicAuth": "xxxx",
+		"scope": "526a3f6b-79c2-4b9e-a463-25dafd112e16"
+	}
+];
+
+function env_get_basicAuth (env) {
+	for (let i = 0; i < envsCfg.length; i++) {
+		if (envsCfg[i]["name"] == env) {
+			return envsCfg[i]["basicAuth"];
+		}
+	}
+	return undefined;
+}
+
+function env_get_endpointToken (env) {
+	for (let i = 0; i < envsCfg.length; i++) {
+		if (envsCfg[i]["name"] == env) {
+			return envsCfg[i]["endpointToken"];
+		}
+	}
+	return undefined;
+}
+
+function env_get_endpointAPI (env) {
+	for (let i = 0; i < envsCfg.length; i++) {
+		if (envsCfg[i]["name"] == env) {
+			return envsCfg[i]["endpointAPI"];
+		}
+	}
+	return undefined;
+}
+
+function env_get_scope (env) {
+	for (let i = 0; i < envsCfg.length; i++) {
+		if (envsCfg[i]["name"] == env) {
+			return envsCfg[i]["scope"];
+		}
+	}
+	return undefined;
+}
+
 // ---------------------------------------------------------------------------------------- read host begin
 
 let host = require("os").hostname();
@@ -16,33 +83,42 @@ if (host.startsWith("service-")) {
 	url_ref = "http://localhost:3000"
 }
 
-function replace_url_ref (_m) {
+/*function replace_url_ref (env, _m) {
+	let __m = _m;
+	if (host.startsWith("service-")) {
+		while (__m.includes("http://localhost:3000/" + env)) {
+			__m = __m.replace("http://localhost:3000/" + env, "https://squid-app-o8e56.ondigitalocean.app/" + env);
+		}
+	}
+	return __m;
+}*/
+
+function replace_url_ref (env, _m) {
 	let __m = _m;
 	if (host.startsWith("service-")) {
 		while (__m.includes("http://localhost:3000")) {
 			__m = __m.replace("http://localhost:3000", "https://squid-app-o8e56.ondigitalocean.app");
 		}
 	}
-	return __m;
+	return __m.replaceAll("http://localhost:3000", "http://localhost:3000/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app", "https://squid-app-o8e56.ondigitalocean.app/" + env);
 }
 
 // ---------------------------------------------------------------------------------------- read host end
 
-var generate_new_token = function (callback, error) {
-	require('request').post("https://orapi-dev.orplc.com/oauth2/token", {
+var generate_new_token = function (env, callback, error) {
+	require('request').post(env_get_endpointToken(env), {
 		headers: {
-			"Authorization": "Basic dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh"
+			"Authorization": "Basic " + env_get_basicAuth(env)
 		},
 		form: {
 			"grant_type": "client_credentials",
-			"scope": "simple"
+			"scope": env_get_scope(env)
 		}
 	}, function (e, response, body) {
 		if (!e) {
 			if (response.statusCode == 200) {
 				
-				
-				fs.writeFileSync("token.txt", body);
+				fs.writeFileSync("token" + env + ".txt", body);
 				
 				let exp = JSON.parse(Buffer.from(JSON.parse(body)["access_token"].split('.')[1], 'base64').toString())["exp"];
 				let now = "" + require('microtime').now();while(now.length > 10){now = now.substr(0, now.length - 1);}now = parseInt(now);
@@ -60,9 +136,9 @@ var generate_new_token = function (callback, error) {
 	});
 };
 
-var get_token = function(callback, error) {
+var get_token = function(env, callback, error) {
 	// read from token file
-    let filePath = "token.txt";
+    let filePath = "token" + env + ".txt";
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
 			// token file exist, check if it still valid
@@ -78,11 +154,11 @@ var get_token = function(callback, error) {
 				callback(x);
 			} else {
 				// token expired, get a new one
-				generate_new_token(callback, error);
+				generate_new_token(env, callback, error);
 			}
 		} else {
 			// token not exist, get a new one an use it
-			generate_new_token(callback, error);
+			generate_new_token(env, callback, error);
 		}
 	});
 };
@@ -167,15 +243,17 @@ function echo(req, res) {
 
 
 // start
-app.all('/sites', (req, response) => {
+app.all('/:env/sites', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "sites.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -193,15 +271,17 @@ app.all('/sites', (req, response) => {
 	});
 });
 
-app.all('/schedules', (req, response) => {
+app.all('/:env/schedules', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "schedules.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -219,15 +299,17 @@ app.all('/schedules', (req, response) => {
 	});
 });
 
-app.all('/schedules-add', (req, response) => {
+app.all('/:env/schedules-add', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "schedules-add.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
@@ -245,15 +327,17 @@ app.all('/schedules-add', (req, response) => {
 	});
 });
 
-app.all('/schedules/:schedule/edit', (req, response) => {
+app.all('/:env/schedules/:schedule/edit', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "schedules-edit.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				console.log(data_with_token);
@@ -273,15 +357,17 @@ app.all('/schedules/:schedule/edit', (req, response) => {
 	});
 });
 
-app.all('/schedules/:schedule', (req, response) => {
+app.all('/:env/schedules/:schedule', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "schedules-_.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
@@ -302,15 +388,17 @@ app.all('/schedules/:schedule', (req, response) => {
 	});
 });
 
-app.all('/schedules/:schedule/sessions', (req, response) => {
+app.all('/:env/schedules/:schedule/sessions', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "schedules-sessions.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
@@ -331,15 +419,17 @@ app.all('/schedules/:schedule/sessions', (req, response) => {
 	});
 });
 
-app.all('/events', (req, response) => {
+app.all('/:env/events', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "events.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
@@ -358,15 +448,17 @@ app.all('/events', (req, response) => {
 	});
 });
 
-app.all('/sessions/:session/items', (req, response) => {
+app.all('/:env/sessions/:session/items', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "sessions-items.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
@@ -387,15 +479,17 @@ app.all('/sessions/:session/items', (req, response) => {
 	});
 });
 
-app.all('/sessions/:session/items/:item', (req, response) => {
+app.all('/:env/sessions/:session/items/:item', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "items-_.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				data_with_token = data_with_token.replace("{item}", req.params.item);
 				
@@ -417,15 +511,17 @@ app.all('/sessions/:session/items/:item', (req, response) => {
 	});
 });
 
-app.all('/items-summary', (req, response) => {
+app.all('/:env/items-summary', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "items-summary.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
@@ -444,15 +540,17 @@ app.all('/items-summary', (req, response) => {
 	});
 });
 
-app.all('/schedules/:schedule/sessions/:session', (req, response) => {
+app.all('/:env/schedules/:schedule/sessions/:session', (req, response) => {
+	
+	let requested_env = req.params.env;
 	
 	let filePath = "sessions-_.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
-			get_token((token) => {
+			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
-				data_with_token = replace_url_ref(data_with_token);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
