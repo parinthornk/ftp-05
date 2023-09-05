@@ -14,7 +14,7 @@ let envsCfg = [
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
 		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602",
-		"backgroundColor": "#effcff"
+		"backgroundColor": "#efefef"
 	},
 	{
 		"name": "qas",
@@ -22,7 +22,7 @@ let envsCfg = [
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "SlZhVU9acTU5RkJtU1FrbEdsSV9lS2QzWWNzYTpDQ0RNOTNwSW1yRjRCTks1Z1Z5dEdFTG9RTm9h",
 		"scope": "49fca1f2-42cb-4815-9277-d8efe1c21129",
-		"backgroundColor": "#fffcef"
+		"backgroundColor": "#ffffff"
 	},
 	{
 		"name": "uat",
