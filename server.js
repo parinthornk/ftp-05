@@ -638,8 +638,8 @@ let internal_links = [
 		"type": "image/png"
 	},
 	{
-		"url": "/v20/:env/img/esb1.png",
-		"file": "startbootstrap-sb-admin-2/img/esb1.png",
+		"url": "/v20/:env/img/logo-wso2.png",
+		"file": "startbootstrap-sb-admin-2/img/logo-wso2.png",
 		"type": "image/png"
 	},
 	{
@@ -675,18 +675,64 @@ for (let i = 0; i < internal_links.length; i++) {
 	});
 }
 
-app.all('/v20/:env/items-summary', (req, response) => {
-	
+app.get('/v20/:env/items-summary', (req, response) => {
 	let requested_env = req.params.env;
-	
 	let filePath = "startbootstrap-sb-admin-2/logs-items.html";
-	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				
+				console.log(data_with_token);
+				response.setHeader('Content-Type', 'text/html');
+				response.status(200);
+				response.end(data_with_token);
+			}, (e) => {
+				response.writeHead(500, {'Content-Type': 'text/html'});
+				response.write(e);
+				response.end();
+			});
+		} else {
+			response.writeHead(500, {'Content-Type': 'text/html'});
+			response.write("error");
+			response.end();
+		}
+	});
+});
+
+app.get('/v20/:env/sites', (req, response) => {
+	let requested_env = req.params.env;
+	let filePath = "startbootstrap-sb-admin-2/sites.html";
+	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
+		if (!err) {
+			get_token(requested_env, (token) => {
+				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
+				console.log(data_with_token);
+				response.setHeader('Content-Type', 'text/html');
+				response.status(200);
+				response.end(data_with_token);
+			}, (e) => {
+				response.writeHead(500, {'Content-Type': 'text/html'});
+				response.write(e);
+				response.end();
+			});
+		} else {
+			response.writeHead(500, {'Content-Type': 'text/html'});
+			response.write("error");
+			response.end();
+		}
+	});
+});
+
+app.get('/v20/:env/schedules', (req, response) => {
+	let requested_env = req.params.env;
+	let filePath = "startbootstrap-sb-admin-2/schedules.html";
+	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
+		if (!err) {
+			get_token(requested_env, (token) => {
+				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
 				console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
