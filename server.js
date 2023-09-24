@@ -7,13 +7,14 @@ const https = require('http');
 
 let fs = require('fs');
 
+const crypto = require("crypto");
+
 let envsCfg = [
 	{
 		"name": "dev",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
-		"scope": "3cf87e71-7e33-4d00-ae60-871e48f59602",
 		"backgroundColor": "#efefef"
 	},
 	{
@@ -21,7 +22,6 @@ let envsCfg = [
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "SlZhVU9acTU5RkJtU1FrbEdsSV9lS2QzWWNzYTpDQ0RNOTNwSW1yRjRCTks1Z1Z5dEdFTG9RTm9h",
-		"scope": "49fca1f2-42cb-4815-9277-d8efe1c21129",
 		"backgroundColor": "#ffffff"
 	},
 	{
@@ -29,7 +29,6 @@ let envsCfg = [
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "xxxx",
-		"scope": "992dc9f2-4d5c-4738-bda4-6282ebdfadf8",
 		"backgroundColor": "#fcffef"
 	},
 	{
@@ -37,7 +36,6 @@ let envsCfg = [
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
 		"basicAuth": "xxxx",
-		"scope": "526a3f6b-79c2-4b9e-a463-25dafd112e16",
 		"backgroundColor": "#ffffff"
 	}
 ];
@@ -70,12 +68,7 @@ function env_get_endpointAPI (env) {
 }
 
 function env_get_scope (env) {
-	for (let i = 0; i < envsCfg.length; i++) {
-		if (envsCfg[i]["name"] == env) {
-			return envsCfg[i]["scope"];
-		}
-	}
-	return undefined;
+	return "" + crypto.randomBytes(16).toString("hex");
 }
 
 function env_get_backgroundColor (env) {
@@ -585,6 +578,134 @@ app.all('/:env/schedules/:schedule/sessions/:session', (req, response) => {
 		}
 	});
 });
+
+// ---------------------------------------------------------------------------------------------------------------------------------------- UI modernized
+
+let internal_links = [
+	{
+		"url": "/v20/:env/vendor/fontawesome-free/css/all.min.css",
+		"file": "startbootstrap-sb-admin-2/vendor/fontawesome-free/css/all.min.css",
+		"type": "text/css"
+	},
+	{
+		"url": "/v20/:env/css/sb-admin-2.min.css",
+		"file": "startbootstrap-sb-admin-2/css/sb-admin-2.min.css",
+		"type": "text/css"
+	},
+	{
+		"url": "/v20/:env/vendor/datatables/dataTables.bootstrap4.min.css",
+		"file": "startbootstrap-sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css",
+		"type": "text/css"
+	},
+	{
+		"url": "/v20/:env/vendor/jquery/jquery.min.js",
+		"file": "startbootstrap-sb-admin-2/vendor/jquery/jquery.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/vendor/bootstrap/js/bootstrap.bundle.min.js",
+		"file": "startbootstrap-sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/vendor/jquery-easing/jquery.easing.min.js",
+		"file": "startbootstrap-sb-admin-2/vendor/jquery-easing/jquery.easing.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/js/sb-admin-2.min.js",
+		"file": "startbootstrap-sb-admin-2/js/sb-admin-2.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/vendor/datatables/jquery.dataTables.min.js",
+		"file": "startbootstrap-sb-admin-2/vendor/datatables/jquery.dataTables.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/vendor/datatables/dataTables.bootstrap4.min.js",
+		"file": "startbootstrap-sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/js/demo/datatables-demo.js",
+		"file": "startbootstrap-sb-admin-2/js/demo/datatables-demo.js",
+		"type": "text/javascript"
+	},
+	{
+		"url": "/v20/:env/img/logo-or-white.png",
+		"file": "startbootstrap-sb-admin-2/img/logo-or-white.png",
+		"type": "image/png"
+	},
+	{
+		"url": "/v20/:env/img/esb1.png",
+		"file": "startbootstrap-sb-admin-2/img/esb1.png",
+		"type": "image/png"
+	},
+	{
+		"url": "/v20/:env/vendor/fontawesome-free/webfonts/fa-solid-900.woff2",
+		"file": "startbootstrap-sb-admin-2/vendor/fontawesome-free/webfonts/fa-solid-900.woff2",
+		"type": "text/plain"
+	},
+	{
+		"url": "/v20/:env/vendor/fontawesome-free/webfonts/fa-solid-900.woff",
+		"file": "startbootstrap-sb-admin-2/vendor/fontawesome-free/webfonts/fa-solid-900.woff",
+		"type": "text/plain"
+	},
+	{
+		"url": "/v20/:env/vendor/fontawesome-free/webfonts/fa-solid-900.ttf",
+		"file": "startbootstrap-sb-admin-2/vendor/fontawesome-free/webfonts/fa-solid-900.ttf",
+		"type": "text/plain"
+	}
+];
+
+for (let i = 0; i < internal_links.length; i++) {
+	app.get(internal_links[i]["url"], (req, response) => {
+		fs.readFile(internal_links[i]["file"], function(err, data){
+			if (!err) {
+				response.setHeader('Content-Type', internal_links[i]["type"]);
+				response.status(200);
+				response.end(data);
+			} else {
+				response.writeHead(500, {'Content-Type': 'text/html'});
+				response.write("error");
+				response.end();
+			}
+		});
+	});
+}
+
+app.all('/v20/:env/items-summary', (req, response) => {
+	
+	let requested_env = req.params.env;
+	
+	let filePath = "startbootstrap-sb-admin-2/logs-items.html";
+	
+	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
+		if (!err) {
+			get_token(requested_env, (token) => {
+				let data_with_token = data.replace("{access_token}", token["access_token"]);
+				data_with_token = replace_url_ref(requested_env, data_with_token);
+				
+				console.log(data_with_token);
+				response.setHeader('Content-Type', 'text/html');
+				response.status(200);
+				response.end(data_with_token);
+			}, (e) => {
+				response.writeHead(500, {'Content-Type': 'text/html'});
+				response.write(e);
+				response.end();
+			});
+		} else {
+			response.writeHead(500, {'Content-Type': 'text/html'});
+			response.write("error");
+			response.end();
+		}
+	});
+});
+
+// ---------------------------------------------------------------------------------------------------------------------------------------- UI modernized
+
 
 app.listen(process.env.PORT || port, () => {
 	console.log("Example app listening on port: " + port);
