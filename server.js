@@ -103,11 +103,14 @@ function replace_url_ref (env, _m) {
 	let __m = _m;
 	if (host.startsWith("service-")) {
 		while (__m.includes("http://localhost:3000/v20")) {
-			__m = __m.replace("http://localhost:3000/v20", "https://squid-app-o8e56.ondigitalocean.app");
+			__m = __m.replace("http://localhost:3000/v20", "https://squid-app-o8e56.ondigitalocean.app/v20");
+		}
+		while (__m.includes("http://localhost:3000/libs")) {
+			__m = __m.replace("http://localhost:3000/libs", "https://squid-app-o8e56.ondigitalocean.app/libs");
 		}
 	}
 	__m = __m.replaceAll("{replace_with_bgcolor}", env_get_backgroundColor(env));
-	return __m.replaceAll("http://localhost:3000/v20", "http://localhost:3000/v20/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app", "https://squid-app-o8e56.ondigitalocean.app/" + env);
+	return __m.replaceAll("http://localhost:3000/v20", "http://localhost:3000/v20/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app/v20", "https://squid-app-o8e56.ondigitalocean.app/v20/" + env);
 }
 
 // ---------------------------------------------------------------------------------------- read host end
