@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Add Schedules</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color:{replace_with_bgcolor};">
+
+
+<div class="container">
+	<h3 id="head-schedule"> / <a href="http://localhost:3000/v20/schedules">schedules</a></h3>
+	<p>Add a new file transfer schedules.</p>
+	<!--button type="button" class="btn btn-primary">Create New Schedule</button-->
+	
+	
+	<div class="table-responsive">
+		<table class="table align-middle" id="myTable">
+		</table>
+	</div>
+</div>
+
+
+
+<div class="container">
+  <h2>Create Transfer Schedule</h2>
+  <!--form action="/action_page.php"-->
+	<br/>
+	
+    <div class="form-group"><label>Schedule Name</label><input type="text" class="form-control" id="schedule_name" placeholder="schedule name"></div>
+	<div class="form-group"><label>Description</label><input type="text" class="form-control" id="schedule_description" placeholder="schedule description"></div>
+	<div class="checkbox"><label><input type="checkbox" id="schedule_enabled" checked>Activate Schedule</label></div>
+	<br/>
+	
+	
+    <div class="form-group"><label>Source Server</label><input type="text" class="form-control" id="source_server" placeholder="source server"></div>
+    <div class="form-group"><label>Source Directory</label><input type="text" class="form-control" id="source_folder" placeholder="source directory"></div>
+    <div class="form-group"><label>Source FN_isFileToTransfer</label><input type="text" class="form-control" id="source_fn_isFileToMove" placeholder="JavaScript code for files selection" value="function(x){return x.toLowerCase().endsWith(&quot;.csv&quot;) || x.toLowerCase().endsWith(&quot;.xlsx&quot;) || x.toLowerCase().endsWith(&quot;.txt&quot;);}" style="font-family: Consolas;background-color: #f4f4ff;"></div>
+	<br/>
+	
+    <div class="form-group"><label>Target Server</label><input type="text" class="form-control" id="target_server" placeholder="target server"></div>
+    <div class="form-group"><label>Target Directory</label><input type="text" class="form-control" id="target_folder" placeholder="target directory"></div>
+	<br/>
+	
+	
+	
+	
+	
+	
+	
+	
+	<button class="btn btn-primary" onclick="callAPI()">Create</button>
+    <button type="submit" class="btn btn-default" onclick="location.href='http://localhost:3000/v20/schedules'">Cancel</button>
+	
+  </form>
+</div>
+<script>
+let token = "{access_token}";
+
+
+
+function callAPI() {
+
+
+
+	
+	/*const requestData = {
+		"siteSource": document.getElementById("source_server").value,
+		"useDynamicDirSource": false,
+		"staticDirSource": document.getElementById("source_folder").value,
+		"siteTarget": document.getElementById("target_server").value,
+		"useDynamicDirTarget": false,
+		"staticDirTarget": document.getElementById("target_folder").value,
+		"retryCount": 5,
+		"retryIntervalMs": 60000,
+		"fnIsFileToMove": document.getElementById("source_fn_isFileToMove").value,
+		"fnRenameTo": "function(x){return x;}",
+		"archiveFolder": "/archive",
+		"workerThreads": 5,
+		"workspace": "default",
+		"name": document.getElementById("schedule_name").value,
+		"description": document.getElementById("schedule_description").value,
+		"plan": "*-*-* *:00:00,*-*-* *:01:00,*-*-* *:02:00,*-*-* *:03:00,*-*-* *:04:00,*-*-* *:05:00,*-*-* *:06:00,*-*-* *:07:00,*-*-* *:08:00,*-*-* *:09:00,*-*-* *:10:00,*-*-* *:11:00,*-*-* *:12:00,*-*-* *:13:00,*-*-* *:14:00,*-*-* *:15:00,*-*-* *:16:00,*-*-* *:17:00,*-*-* *:18:00,*-*-* *:19:00,*-*-* *:20:00,*-*-* *:21:00,*-*-* *:22:00,*-*-* *:23:00,*-*-* *:24:00,*-*-* *:25:00,*-*-* *:26:00,*-*-* *:27:00,*-*-* *:28:00,*-*-* *:29:00,*-*-* *:30:00,*-*-* *:31:00,*-*-* *:32:00,*-*-* *:33:00,*-*-* *:34:00,*-*-* *:35:00,*-*-* *:36:00,*-*-* *:37:00,*-*-* *:38:00,*-*-* *:39:00,*-*-* *:40:00,*-*-* *:41:00,*-*-* *:42:00,*-*-* *:43:00,*-*-* *:44:00,*-*-* *:45:00,*-*-* *:46:00,*-*-* *:47:00,*-*-* *:48:00,*-*-* *:49:00,*-*-* *:50:00,*-*-* *:51:00,*-*-* *:52:00,*-*-* *:53:00,*-*-* *:54:00,*-*-* *:55:00,*-*-* *:56:00,*-*-* *:57:00,*-*-* *:58:00,*-*-* *:59:00",
+		"enabled": true
+	};*/
+	
+	const requestData = {
+		"siteSource": document.getElementById("source_server").value,
+		"useDynamicDirSource": false,
+		"staticDirSource": document.getElementById("source_folder").value,
+		"siteTarget": document.getElementById("target_server").value,
+		"useDynamicDirTarget": false,
+		"staticDirTarget": document.getElementById("target_folder").value,
+		"retryCount": 5,
+		"retryIntervalMs": 60000,
+		"fnIsFileToMove": document.getElementById("source_fn_isFileToMove").value,
+		"fnRenameTo": "function(x){return x;}",
+		"archiveFolder": "/archive",
+		"workerThreads": 5,
+		"workspace": "default",
+		"name": document.getElementById("schedule_name").value,
+		"description": document.getElementById("schedule_description").value,
+		"plan": "*-*-* *:00:00,*-*-* *:01:00,*-*-* *:02:00,*-*-* *:03:00,*-*-* *:04:00,*-*-* *:05:00,*-*-* *:06:00,*-*-* *:07:00,*-*-* *:08:00,*-*-* *:09:00,*-*-* *:10:00,*-*-* *:11:00,*-*-* *:12:00,*-*-* *:13:00,*-*-* *:14:00,*-*-* *:15:00,*-*-* *:16:00,*-*-* *:17:00,*-*-* *:18:00,*-*-* *:19:00,*-*-* *:20:00,*-*-* *:21:00,*-*-* *:22:00,*-*-* *:23:00,*-*-* *:24:00,*-*-* *:25:00,*-*-* *:26:00,*-*-* *:27:00,*-*-* *:28:00,*-*-* *:29:00,*-*-* *:30:00,*-*-* *:31:00,*-*-* *:32:00,*-*-* *:33:00,*-*-* *:34:00,*-*-* *:35:00,*-*-* *:36:00,*-*-* *:37:00,*-*-* *:38:00,*-*-* *:39:00,*-*-* *:40:00,*-*-* *:41:00,*-*-* *:42:00,*-*-* *:43:00,*-*-* *:44:00,*-*-* *:45:00,*-*-* *:46:00,*-*-* *:47:00,*-*-* *:48:00,*-*-* *:49:00,*-*-* *:50:00,*-*-* *:51:00,*-*-* *:52:00,*-*-* *:53:00,*-*-* *:54:00,*-*-* *:55:00,*-*-* *:56:00,*-*-* *:57:00,*-*-* *:58:00,*-*-* *:59:00",
+		"isPendingAdHoc": false,
+		"enabled": true
+	};
+	
+	let statusCode = -1;
+
+    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules', {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + token
+		},
+		body: JSON.stringify(requestData)
+    }).then(response => {
+		console.log('Response status code:', response.status);
+		
+		statusCode = response.status;
+		
+		
+		return response.json();
+	}).then(data => {
+		console.log(data);
+		
+		if (statusCode != 200 && statusCode != 201) {
+			alert("Error [" + statusCode + "]: " + data);
+		} else {
+			window.location.href = "http://localhost:3000/v20/schedules/" + requestData["name"];
+		}
+		
+	}).catch(error => {
+		alert(error);
+	});
+}
+</script>
+
+</body>
+
+</html>

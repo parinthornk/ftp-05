@@ -12,13 +12,13 @@
     <title>OR | Common FTP</title>
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="http://localhost:3000/libs/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="http://localhost:3000/libs/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="http://localhost:3000/libs/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -34,7 +34,7 @@
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
                 <div class="sidebar-brand-icon">
                     <!--i class="fas fa-laugh-wink"></i-->
-					<div class="sidebar-brand-text mx-3"><img class="rounded-circle" src="img/logo-or-white.png" alt="..." width="40%" height="40%"></div>
+					<div class="sidebar-brand-text mx-3"><img class="rounded-circle" src="http://localhost:3000/libs/img/logo-or-white.png" alt="..." width="40%" height="40%"></div>
                 </div>
 				
 				
@@ -53,14 +53,14 @@
 
             <!-- Nav Item - Sites -->
             <li class="nav-item active">
-                <a class="nav-link" href="sites">
+                <a class="nav-link" href="http://localhost:3000/v20/sites">
                     <i class="fas fa-fw fa-network-wired"></i>
                     <span>Sites</span></a>
             </li>
 
             <!-- Nav Item - Schedules -->
             <li class="nav-item">
-                <a class="nav-link" href="schedules">
+                <a class="nav-link" href="http://localhost:3000/v20/schedules">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Schedules</span></a>
             </li>
@@ -72,14 +72,14 @@
 
             <!-- Nav Item - Log Items -->
             <li class="nav-item">
-                <a class="nav-link" href="items-summary">
+                <a class="nav-link" href="http://localhost:3000/v20/items-summary">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>Logs items</span></a>
             </li>
 
             <!-- Nav Item - Events -->
             <li class="nav-item">
-                <a class="nav-link" href="events">
+                <a class="nav-link" href="http://localhost:3000/v20/events">
                     <i class="fas fa-fw fa-info"></i>
                     <span>Events</span></a>
             </li>
@@ -207,7 +207,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">ESB</span>
-                                <img class="img-profile rounded-circle" src="img/logo-wso2.png">
+                                <img class="img-profile rounded-circle" src="http://localhost:3000/libs/img/logo-wso2.png">
                             </a>
                             <!-- Dropdown - User Information -->
                             <!--div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -288,21 +288,21 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="http://localhost:3000/libs/vendor/jquery/jquery.min.js"></script>
+    <script src="http://localhost:3000/libs/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="http://localhost:3000/libs/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="http://localhost:3000/libs/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="http://localhost:3000/libs/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="http://localhost:3000/libs/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="http://localhost:3000/libs/js/demo/datatables-demo.js"></script>
 	
 <script>
 let token = "{access_token}";
@@ -354,7 +354,7 @@ const callAPI = async () => {
 		// change inner HTML
 		//document.getElementById("dataTable").innerHTML = text_thead + text_tbody;
 		
-		let inj = '<!-- Page Heading --><h1 class="h3 mb-2 text-gray-800">Sites</h1><p class="mb-4">File transfer sites. For more schedules, see <a target="_blank" href="schedules">Schedules</a>.</p><!-- DataTales Example --><div class="card shadow mb-4" id="div-datatable"><div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">File Transfer Sites</h6></div><div class="card-body"><div class="table-responsive"><table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">' + text_thead + text_tbody + '</table></div></div></div>';
+		let inj = '<!-- Page Heading --><h1 class="h3 mb-2 text-gray-800">Sites</h1><p class="mb-4">File transfer sites. For more schedules, see <a href="schedules">Schedules</a>.</p><!-- DataTales Example --><div class="card shadow mb-4" id="div-datatable"><div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">File Transfer Sites</h6></div><div class="card-body"><div class="table-responsive"><table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">' + text_thead + text_tbody + '</table></div></div></div>';
 		document.getElementById("div-page-content").innerHTML = inj;
 		
 		$('#dataTable').DataTable();

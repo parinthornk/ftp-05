@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>WTRANSFER | Schedules</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color:{replace_with_bgcolor};">
+
+
+<div class="container">
+<div class="table-responsive">
+  <h3 id="head-schedule"> / <a href="http://localhost:3000/v20/schedules">schedules</a> / <a id="refth001" href="http://localhost:3000/v20/schedules">xxxxxx</a> / <a id="refth002" href="http://localhost:3000/v20/schedules">sessions</a> / <span id="refth003">xxxxxx</span></h3>
+  <p>File Transfer schedules.</p>
+  
+	<table style="width:100%" class="table align-middle" id="myTable">
+	</table>
+  
+  <!--table class="table align-middle" id="myTable">
+  </table-->
+</div>
+</div>
+
+<script>
+
+let token = "{access_token}";
+
+let session = "{session}";
+
+let schedule = "{schedule}";
+
+const callAPI = async () => {
+	
+	document.getElementById("refth001").innerHTML = schedule;
+	document.getElementById("refth001").setAttribute("href", "http://localhost:3000/v20/schedules/" + schedule);
+	
+	document.getElementById("refth002").setAttribute("href", "http://localhost:3000/v20/schedules/" + schedule + "/sessions");
+	
+	
+	document.getElementById("refth003").innerHTML = session;
+	
+	
+	//document.getElementById("head-schedule").innerHTML = " / <a href=\"http://localhost:3000/v20/schedules" + "\">schedules</a> / <a href=\"http://localhost:3000/v20/schedules/" + scheduleName + "\">" + scheduleName + "</a>";
+	
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	/*let unnecessaryFields = [
+		"workspace",
+		"password",
+		"created",
+		"modified",
+		"keyPath"
+	];*/
+	
+	let unnecessaryFields = [
+		"workspace",
+		"created",
+		"modified",
+		"useDynamicDirSource",
+		"fnDynamicDirSource",
+		"useDynamicDirTarget",
+		"fnDynamicDirTarget",
+		"retryCount",
+		"retryIntervalMs",
+		"fnIsFileToMove",
+		"fnRenameTo",
+		"archiveFolder",
+		"fnArchiveRenameTo",
+		"workerThreads",
+		"pgpDirection",
+		"pgpKeyPath",
+		"pgpKeyPassword",
+		"fnPgpRenameTo",
+		"plan",
+		"validFrom",
+		"validUntil",
+		"staticDirSource",
+		"staticDirTarget"
+	];
+	
+	let fieldRename = [
+		{
+			"from": "siteSource",
+			"to": "source server"
+		},
+		{
+			"from": "siteTarget",
+			"to": "target server"
+		},
+		{
+			"from": "name",
+			"to": "schedule name"
+		},
+		{
+			"from": "previousCheckpoint",
+			"to": "last updated"
+		}
+	];
+	
+	const myJson = await response.json();
+	
+	let obj = myJson;
+	
+	let inner = "";
+	
+	
+	let fields = Object.keys(obj);
+	for (let i=0;i<fields.length;i++) {
+		let tkey = fields[i];
+		let tvalue = obj[tkey];
+		
+
+		if (tvalue == "null") {
+			tvalue = "-";
+		}
+		if (tvalue == null) {
+			tvalue = "-";
+		}
+				
+				
+		if (tkey == "enabled") {
+			let th = "";
+			if (tvalue) {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ccffdd; color: #001600;\">enabled</span>";
+			} else {
+				th = "<span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ffddcc; color: #160000;\">disabled</span>";
+			}
+			inner += "<tr><th>" + tkey + ": </th><td>" + th + "</td></tr>";
+		} else if (tkey == "siteSource") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/v20/sites/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "siteTarget") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/v20/sites/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "name") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/v20/schedules/" + tvalue + "\">" + tvalue + "</a></td></tr>";
+		} else if (tkey == "fnIsFileToMove") {
+			inner += "<tr><th>" + tkey + ": </th><td style=\"font-family: consolas; background:#fbfbfb;\">" + tvalue + "</td></tr>";
+		} else if (tkey == "fnRenameTo") {
+			inner += "<tr><th>" + tkey + ": </th><td style=\"font-family: consolas; background:#fbfbfb;\">" + tvalue + "</td></tr>";
+		} else if (tkey == "items") {
+			inner += "<tr><th>" + tkey + ": </th><td><a href=\"http://localhost:3000/v20/sessions/" + session + "/items\">" + tvalue + "</a></td></tr>";
+		} else {
+			inner += "<tr><th>" + tkey + ": </th><td>" + tvalue + "</td></tr>";
+		}
+		
+	}
+	document.getElementById("myTable").innerHTML = inner;
+	
+	
+	
+	/*if (objects.length > 0) {
+		
+		// sample
+		let sample = objects[0];
+		
+		// delete unnecessary fields
+		for (let i = 0; i < unnecessaryFields.length; i++) {
+			delete sample[unnecessaryFields[i]];
+		}
+		
+		// assign thead
+		let thead = "";
+		let fields = Object.keys(sample);
+		for (let i=0;i<fields.length;i++) {
+			let field = fields[i];
+			
+			// rename
+			for (let n = 0; n < fieldRename.length; n++) {
+				let fr = fieldRename[n];
+				if (fr["from"] === field) {
+					field = fr["to"];
+				}
+			}
+			
+			let th = "<th>"+field+"</th>";
+			thead += th;
+		}
+		thead = "<thead><tr>" + thead + "</tr></thead>";
+		
+		// assign tbody
+		let tbody = "";
+		for (let i=0;i<objects.length;i++) {
+			let obj = objects[i];
+			
+			let th = "";
+			for (let j=0;j<fields.length;j++) {
+				let tkey = fields[j];
+				let tvalue = obj[tkey];
+				
+				if (tvalue == "null") {
+					tvalue = "-";
+				}
+				if (tvalue == null) {
+					tvalue = "-";
+				}
+				
+				if (j == 4) { // beautiful status enabled
+				
+					if (tvalue) {
+						th += "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ccffdd; color: #001600;\">enabled</span></td>";
+					} else {
+						th += "<td><span class=\"badge badge-warning rounded-pill d-inline\" style=\"background-color: #ffddcc; color: #160000;\">disabled</span></td>";
+					}
+					
+					
+				} else if (j == 6) { // link to sessions
+					if (tvalue < 1) {
+						th += "<td><button type=\"button\" class=\"btn btn-link btn-rounded btn-sm fw-bold\" data-mdb-ripple-color=\"dark\">-</button></td>";
+					} else {
+					
+						// <a class="btn" href="">Link</a>
+						let scheduleName = obj["name"];
+						th += "<td><a class=\"btn\" href=\"http://localhost:3000/v20/schedules/" + scheduleName + "/sessions\">" + tvalue + "</a></td>";
+						
+						
+						
+						//th += "<td><button type=\"button\" class=\"btn btn-link btn-rounded btn-sm fw-bold\" data-mdb-ripple-color=\"dark\">" + tvalue + "</button></td>";
+					}
+				} else {
+					th += "<td>" + tvalue + "</td>";
+				}
+			}
+			th = "<tr>" + th + "</tr>";
+			tbody += th;
+		}
+		tbody = "<tbody>" + tbody + "</tbody>";
+		let tall = thead + tbody;
+		//console.log(tall);
+		document.getElementById("myTable").innerHTML = tall;
+	}*/
+}
+
+callAPI();
+
+</script>
+
+</body>
+
+</html>

@@ -53,14 +53,14 @@
 
             <!-- Nav Item - Sites -->
             <li class="nav-item">
-                <a class="nav-link" href="sites">
+                <a class="nav-link" href="http://localhost:3000/v20/sites">
                     <i class="fas fa-fw fa-network-wired"></i>
                     <span>Sites</span></a>
             </li>
 
             <!-- Nav Item - Schedules -->
             <li class="nav-item">
-                <a class="nav-link" href="schedules">
+                <a class="nav-link" href="http://localhost:3000/v20/schedules">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Schedules</span></a>
             </li>
@@ -72,14 +72,14 @@
 
             <!-- Nav Item - Log Items -->
             <li class="nav-item active">
-                <a class="nav-link" href="logs-items">
+                <a class="nav-link" href="http://localhost:3000/v20/items-summary">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>Logs items</span></a>
             </li>
 
             <!-- Nav Item - Events -->
             <li class="nav-item">
-                <a class="nav-link" href="events">
+                <a class="nav-link" href="http://localhost:3000/v20/events">
                     <i class="fas fa-fw fa-info"></i>
                     <span>Events</span></a>
             </li>
@@ -235,115 +235,143 @@
 
                 </nav>
                 <!-- End of Topbar -->
-				
-				<!-- Page Heading -->
-				<div class="container-fluid">
-					<h1 class="h3 mb-2 text-gray-800">Logs Items</h1>
-					<p class="mb-4">File transfer logs items. For schedules, see <a target="_blank" href="schedules">FTP Schedules</a>.</p>
-				</div>
-				
-                <!-- Begin Log Filter -->
-				<div class="container-fluid">
-					<div class="container-fluid" style="font-size:0.875em;">
-						<form>
-							<div class="row">
-								<div class="col">
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_01" name="chb_01" checked>
-										<label id="lb_chb_01" for="chb_01">CREATED</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_02" name="chb_02" checked>
-										<label id="lb_chb_02" for="chb_02">QUEUED</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_03" name="chb_03" checked>
-										<label id="lb_chb_03" for="chb_03">ERROR_ENQUEUE</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_04" name="chb_04" checked>
-										<label id="lb_chb_04" for="chb_04">DEQUEUED</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_05" name="chb_05" checked>
-										<label id="lb_chb_05" for="chb_05">EXECUTING</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_06" name="chb_06" checked>
-										<label id="lb_chb_06" for="chb_06">WAITING_FOR_RETRY</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_07" name="chb_07" checked>
-										<label id="lb_chb_07" for="chb_07">FAILED</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_08" name="chb_08" checked>
-										<label id="lb_chb_08" for="chb_08">SUCCESS</label>
-									</div>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_09" name="chb_09" checked>
-										<label id="lb_chb_09" for="chb_09">DISMISS</label>
-									</div>
-								</div>
-								<div class="col">
-									<div class="form-group" style="width:100%;">
-										<label for="f_search_schedule">Schedule: </label>
-										<input class="form-control" type="text" id="f_search_schedule" name="f_search_schedule" style="border-radius: 0; border:none;"><br>
-									</div>
-									<div class="form-group" style="width:100%;">
-										<label for="f_search_file_name">File Name: </label>
-										<input class="form-control" type="text" id="f_search_file_name" name="f_search_file_name" style="border-radius: 0; border:none;"><br>
-									</div>
-									<button type="button" class="btn btn-primary" onclick="submit_request()" id="btn_submit" style="border-radius: 0;">Apply</button>
-									<h4 id="total_text"></h4>
-								</div>
-								<div class="col">
-								</div>
-								<div class="col">
-									<div class="form-check">
-										<input type="radio" class="form-check-input" id="radio1" name="optradio" value="1" checked>
-										<label class="form-check-label" for="radio1">1 hour ago</label>
-									</div>
-									<div class="form-check">
-										<input type="radio" class="form-check-input" id="radio2" name="optradio" value="4">
-										<label class="form-check-label" for="radio2">4 hours ago</label>
-									</div>
-									<div class="form-check">
-										<input type="radio" class="form-check-input" id="radio3" name="optradio" value="12">
-										<label class="form-check-label" for="radio3">12 hours ago</label>
-									</div>
-									<div class="form-check">
-										<input type="radio" class="form-check-input" id="radio4" name="optradio" value="24">
-										<label class="form-check-label" for="radio4">1 day ago</label>
-									</div>
-									<div class="form-check">
-										<input type="radio" class="form-check-input" id="radio5" name="optradio" value="168">
-										<label class="form-check-label" for="radio5">1 week ago</label>
-									</div>
-									<br/>
-									<div class="form-check"><input type="checkbox" class="form-check-input" id="chb_use_lookback_custom_period" name="chb_use_lookback_custom_period" onclick="toggle_chb_use_lookback_custom_period();">
-										<label id="lb_chb_use_lookback_custom_period" for="chb_use_lookback_custom_period">Use Custom Period</label>
-									</div>
-									<table class="table" style="width:50%;">
-										<tbody>
-											<tr>
-												<td>From: </td>
-												<td>
-													<input id="calendar_from" type="datetime-local" class="form-control" disabled="true" style="border-radius: 0;"/>
-												</td>
-												<td>To: </td>
-												<td>
-													<input id="calendar_to" type="datetime-local" class="form-control" disabled="true" style="border-radius: 0;"/>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="col">
-								</div>
-							</div>
-							<!--div class="row">
-								<div class="col">
-									<br/>
-								</div>
-							</div-->
-						</form>
-					</div>
-				</div>
-				
+
                 <!-- Begin Page Content -->
-                <div class="container-fluid" id="div-datatable">
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800" id="head-filename">undefined</h1>
+                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p>
+							
+					<div class="row">
+
+						<div class="col-lg-8">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4" id="card-data">
+						<!--
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Logs</h6>
+                        </div>
+                        <div class="card-body" style="font-size:0.875em;">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Age</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+											<td>Airi Satou</td>
+											<td>Accountant</td>
+											<td>Tokyo</td>
+											<td>33</td>
+											<td>2008/11/28</td>
+											<td>$162,700</td>
+										</tr>
+                                        <tr>
+											<td>Airi Satou</td>
+											<td>Accountant</td>
+											<td>Tokyo</td>
+											<td>33</td>
+											<td>2008/11/28</td>
+											<td>$162,700</td>
+										</tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+						-->
+                    </div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+
+                </div>
+
+						<div class="col-lg-4">
+
+							<!-- Basic Card Example -->
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="m-0 font-weight-bold text-primary">Item Info</h6>
+								</div>
+								
+								<div class="card-body" style="font-size:0.875em;">
+									<div class="table-responsive">
+										<table class="table table-borderless" width="100%" cellspacing="0" id="table-item-details">
+											<tbody>
+												<tr>
+													<td>name</td>
+													<td>Garrett Winters</td>
+												</tr>
+												<tr>
+													<td>position</td>
+													<td>Accountant</td>
+												</tr>
+												<tr>
+													<td>city</td>
+													<td>Tokyo</td>
+												</tr>
+												<tr>
+													<td>age</td>
+													<td>63</td>
+												</tr>
+												<tr>
+													<td>joined</td>
+													<td>2011/07/25</td>
+												</tr>
+												<tr>
+													<td>bid</td>
+													<td>$170,750</td>
+												</tr>
+											</tbody>
+										</table>
+										
+									</div>
+								</div>
+								<div class="card-header py-3">
+									<button type="button" class="btn btn-primary btn-sm" style="font-size:0.875em; border-radius: 0;" id="btn_re_execute" onclick="re_execute()">Re-Execute</button>
+								</div>
+								
+							</div>
+
+						</div>
+                </div>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -404,191 +432,88 @@
     <!-- Page level plugins -->
     <script src="http://localhost:3000/libs/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="http://localhost:3000/libs/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="http://localhost:3000/libs/js/demo/datatables-demo.js"></script>
 
+    <!-- Page level custom scripts -->
+    <script src="http://localhost:3000/libs/js/demo/datatables-demo.js"></script>
+	
 <script>
 
+document.getElementById("btn_re_execute").style.visibility = "hidden";
+
 let token = "{access_token}";
+let session = "{session}";
+let item = "{item}";
 
-let now = new Date();
-now.setMinutes(now.getMinutes() + 1);
+const re_execute = function() {
 
-var oneHourPrior = new Date(now);
-oneHourPrior.setHours(now.getHours() - 1);
+	let confirm_re_execute = confirm("Do you want to re-execute this item?");
+	if (confirm_re_execute) {
 
-document.getElementById("calendar_from").value = get_format_calendar(oneHourPrior);
-document.getElementById("calendar_to").value = get_format_calendar(now);
+		document.getElementById("btn_re_execute").disabled = true;
 
-function set_total_items (total) {
-	document.getElementById("total_text").innerHTML = total;
-}
-
-set_total_items("");
-
-
-function get_format_calendar(myDate) {
-	let year = myDate.getFullYear();
-	let month = ('0' + (myDate.getMonth() + 1)).slice(-2);
-	let day = ('0' + myDate.getDate()).slice(-2);
-	let hours = ('0' + myDate.getHours()).slice(-2);
-	let minutes = ('0' + myDate.getMinutes()).slice(-2);
-	return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
-}
-
-function get_format_api(formatCalendar) {
-	let year = formatCalendar.substr(0, 4);
-	let month = formatCalendar.substr(5, 2);
-	let day = formatCalendar.substr(8, 2);
-	let hours = formatCalendar.substr(11, 2);
-	let minutes = formatCalendar.substr(14, 2);
-	return year + month + day + hours + minutes + "00";
-}
-
-function toggle_chb_use_lookback_custom_period() {
-	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
-		document.getElementById("calendar_from").disabled = false;
-		document.getElementById("calendar_to").disabled = false;
-		
-		document.getElementById("radio1").disabled = true;
-		document.getElementById("radio2").disabled = true;
-		document.getElementById("radio3").disabled = true;
-		document.getElementById("radio4").disabled = true;
-		document.getElementById("radio5").disabled = true;
-	} else {
-		document.getElementById("calendar_from").disabled = true;
-		document.getElementById("calendar_to").disabled = true;
-		
-		document.getElementById("radio1").disabled = false;
-		document.getElementById("radio2").disabled = false;
-		document.getElementById("radio3").disabled = false;
-		document.getElementById("radio4").disabled = false;
-		document.getElementById("radio5").disabled = false;
+		let r_code = -1;
+		fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + token
+			}
+		}).then(response => {
+			r_code = response.status;
+			return response.json();
+		}).then(data => {
+			on_r_code(r_code, data);
+		}).catch(error => {
+			on_r_code(r_code, error);
+		});
 	}
 }
 
-let callAPI = async (url_00) => {
+const on_r_code = function(r_code, r_tmp) {
+	if (r_code == 200) {
+		location.reload();
+	} else {
+		document.getElementById("btn_re_execute").disabled = false;
+		alert(r_tmp);
+	}
+}
 
-	document.getElementById("btn_submit").disabled = true;
-	let response_00 = await fetch(url_00, {
+const callAPI = async () => {
+	
+	/*// get parent schedule
+	let url_00 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	const response_00 = await fetch(url_00, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	const myJson_00 = await response_00.json();
+	let schedule = myJson_00["schedule"];*/
+	
+	// load item details
+	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session + "/items/" + item;
+	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
 			"Authorization": "Bearer " + token
 		}
 	});
 	
-	let myJsonx = await response_00.json();
+	const myJson = await response.json();
 	
-	let myJson = JSON.parse(JSON.stringify(myJsonx));
-	
-	let objects = myJson["list"];
-	
-	if (objects.length > 0) {
-		display_logs_to_table(objects);
-		document.getElementById("div-datatable").style.visibility = "visible";
-	} else {
-		alert("objects.length > 0 ---> false");
-	}
-	
-	document.getElementById("btn_submit").disabled = false;
-	
-}
-
-function submit_request() {
-	
-	document.getElementById("div-datatable").style.visibility = "hidden";
-
-	set_total_items("");
-	
-	let t_api_from = "";
-	let t_api_to = "";
-	
-	if (document.getElementById("chb_use_lookback_custom_period").checked == true) {
-		
-		t_api_from = get_format_api(document.getElementById("calendar_from").value);
-		t_api_to = get_format_api(document.getElementById("calendar_to").value);
-		
-	} else {
-	
-		// recalculate "now"
-		now = new Date();
-		now.setMinutes(now.getMinutes() + 1);
-		
-		let v1 = document.getElementsByName("optradio");
-		let nHours = -1;
-		for (let i = 0; i < v1.length; i++) {
-			if (v1[i].checked) {
-				nHours = v1[i].value;
-				break;
-			}
-		}
-		
-		if (nHours > 0) {
-		
-			let then = new Date(now);
-			
-			then.setSeconds(now.getSeconds() - 3600 * nHours);
-			
-			
-			t_api_from = get_format_api(get_format_calendar(then));
-			t_api_to = get_format_api(get_format_calendar(now));
-			
-			
-			
-		} else {
-			alert("nHours must be greater than 0.");
-		}
-	}
-	
-	if (t_api_from.length > 0 && t_api_to.length > 0) {
-		
-	} else {
-		return;
-	}
-	
-	let arr_status = "";
-	if (document.getElementById("chb_01").checked) { arr_status += document.getElementById("lb_chb_01").innerHTML + ","; }
-	if (document.getElementById("chb_02").checked) { arr_status += document.getElementById("lb_chb_02").innerHTML + ","; }
-	if (document.getElementById("chb_03").checked) { arr_status += document.getElementById("lb_chb_03").innerHTML + ","; }
-	if (document.getElementById("chb_04").checked) { arr_status += document.getElementById("lb_chb_04").innerHTML + ","; }
-	if (document.getElementById("chb_05").checked) { arr_status += document.getElementById("lb_chb_05").innerHTML + ","; }
-	if (document.getElementById("chb_06").checked) { arr_status += document.getElementById("lb_chb_06").innerHTML + ","; }
-	if (document.getElementById("chb_07").checked) { arr_status += document.getElementById("lb_chb_07").innerHTML + ","; }
-	if (document.getElementById("chb_08").checked) { arr_status += document.getElementById("lb_chb_08").innerHTML + ","; }
-	if (document.getElementById("chb_09").checked) { arr_status += document.getElementById("lb_chb_09").innerHTML + ","; }
-	
-	arr_status = arr_status.substr(0, arr_status.length - 1);
-	arr_status = arr_status.toLowerCase();
-	
-	//
-	let text_query_description = "" + document.getElementById("f_search_schedule").value;
-	if (text_query_description.length > 0) {
-		text_query_description = "&description=" + text_query_description;
-	}
-	
-	let text_query_file_name = "" + document.getElementById("f_search_file_name").value;
-	if (text_query_file_name.length > 0) {
-		text_query_file_name = "&file_name=" + text_query_file_name;
-	}
-	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description + text_query_file_name;
-	
-	callAPI(url);
-}
-
-function display_logs_to_table(logs) {
-
-	// example
+	// display item details
 	let example = {
 		"workspace": "default",
-		"session": 35985937,
-		"name": "c9a6f43b58f1435da5575c930fb26a21",
-		"description": "Auto-generated by schedule PLATT-NEW079. [77a8316e3bd3465688df5390813fffa6]",
-		"folder": "/pricing/Data",
-		"folderArchive": "/pricing/Data",
-		"fileName": "CorrectQuotationPrices.txt",
-		"fileNameArchive": "CorrectQuotationPrices.txt",
-		"created": "2023-09-24 10:00:18",
-		"modified": "2023-09-24 10:00:45",
+		"session": 27653077,
+		"name": "3488616192f64fdbb5c4496970d3a2d9",
+		"description": "Auto-generated by schedule PTTOR_APIM_ORETAXReconciliationAndSubmissionSend_CS-BC_OR_ETAX-BS_ERP_ECP100-111. [a95ee5345533482bae47115dfefff755]",
+		"folder": "/etax/SIT/sap/FIAR/inbound",
+		"folderArchive": "/etax/SIT/sap/FIAR/inbound/Archive",
+		"fileName": "20230831145252_2308311452.csv",
+		"fileNameArchive": "20230831145252_2308311452.csv.20230831145303.arc",
+		"created": "2023-08-31 14:53:03",
+		"modified": "2023-08-31 14:53:14",
 		"retryQuota": 5,
 		"retryRemaining": 6,
 		"retryIntervalMs": 60000,
@@ -598,66 +523,120 @@ function display_logs_to_table(logs) {
 		"fnCallback": null
 	};
 	
-	// selected fiels to display
-	let selected_fields = [
-		"created",
-		"description",
-		"fileName",
-		"status"
-	];
+	// find schedule
+	let tmp = myJson["description"];
+	tmp = tmp.substring("Auto-generated by schedule ".length, tmp.length);
+	let schedule = tmp.substring(0, tmp.length - ". [a95ee5345533482bae47115dfefff755]".length);
 	
-	// create thead
-	let text_thead = "";
-	for (let i = 0; i < selected_fields.length; i++) {
-		let fieldName = selected_fields[i];
-		if (fieldName == 'description') {
-			fieldName = 'schedule';
-		}
-		text_thead += "<th>" + fieldName + "</th>";
-	}
-	text_thead = "<thead><tr>" + text_thead + "</tr></thead>";
+	delete myJson["workspace"];
+	delete myJson["folderArchive"];
+	delete myJson["fileNameArchive"];
+	delete myJson["modified"];
+	delete myJson["retryQuota"];
+	delete myJson["fnCallback"];
 	
-	// create tbody
-	let text_tbody = "";
-	for (let i = 0; i < logs.length; i++) {
-		let obj = logs[i];
-		let text_tr = "";
+	let fields = Object.keys(myJson);
+	let tbody = '<tbody>';
+	for (let i = 0; i < fields.length; i++) {
+		let key = fields[i];
+		let value = myJson[key];
 		
-		// get session of the item
-		let session = obj['session'];
 		
-		// get item id
-		let id = obj['name'];
-		
-		for (let j = 0; j < selected_fields.length; j++) {
-			let value = obj[selected_fields[j]];
-			
-			if (value.startsWith('Auto-generated by schedule')) {
-				// extract schedule_name from description
-				let tmp_description = value;
-				let schedule_name = tmp_description.substring(0, tmp_description.length - ". [aa0f88c1ba214218a5a8f4284dabbd2d]".length);
-				schedule_name = schedule_name.substring("Auto-generated by schedule ".length, schedule_name.length);
-				value = schedule_name;
+		// something
+		{
+			if (value == "1970-01-01 00:00:00") {
+				continue;
 			}
-			
-			if (selected_fields[j] == "fileName") {
-				value = '<a href="sessions/' + session + '/items/' + id + '">' + value + '</a>';
+			if (key == "name") {
+				key = "id";
 			}
-			
-			text_tr += "<td>" + value + "</td>";
+			if (key == "description") {
+				key = "schedule";
+				value = value.substring("Auto-generated by schedule ".length, value.length);
+				value = value.substring(0, value.length - ". [a95ee5345533482bae47115dfefff755]".length);
+			}
+			if (key == "session") {
+				value = '<a href="http://localhost:3000/v20/schedules/' + schedule + '/sessions/' + value + '">' + value + '</a>';
+			}
+			if (key == "schedule") {
+				value = '<a href="http://localhost:3000/v20/schedules/' + schedule + '">' + value + '</a>';
+			}
 		}
-		text_tr = "<tr>" + text_tr + "</tr>";
-		text_tbody += text_tr;
+		
+		
+		
+		
+		let text_tr = '<tr><td style="font-weight: bold;">' + key + '</td><td>' + value + '</td></tr>';
+		tbody = tbody + text_tr;
 	}
-	text_tbody = "<tbody>" + text_tbody + "</tbody>";
+	tbody = tbody + '</tbody>';
 	
-	let inner = '<div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Items</h6></div><div class="card-body"><div class="table-responsive" style="font-size:0.875em;"><table class="table table-bordered table-sm table-hover" id="dataTable" width="100%" cellspacing="0">' + text_thead + text_tbody + '</table></div></div>';
-	document.getElementById("div-datatable").innerHTML = inner;
-	
-	$('#dataTable').DataTable();
+	document.getElementById("table-item-details").innerHTML = tbody;
+	document.getElementById("head-filename").innerHTML = myJson["fileName"];
+	document.getElementById("btn_re_execute").style.visibility = "visible";
 }
 
+const retrive_item_logs = async () => {
+	let url_01 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items/" + item + "/logs";
+	
+	const response_01 = await fetch(url_01, {
+		method: 'GET',
+		headers: {
+			"Authorization": "Bearer " + token
+		}
+	});
+	
+	const myJson = await response_01.json();
+	
+	let objects = myJson["list"];
+	
+	if (objects.length > 0) {
+		// selected fiels to display
+		let selected_fields = Object.keys(objects[0]);
+		selected_fields = [
+			"id",
+			"created",
+			"logType",
+			"body"
+		];
+		
+		// create thead
+		let text_thead = "";
+		for (let i = 0; i < selected_fields.length; i++) { text_thead += "<th>" + selected_fields[i] + "</th>"; }
+		text_thead = "<thead><tr>" + text_thead + "</tr></thead>";
+		
+		// create tbody
+		let text_tbody = "";
+		for (let i = 0; i < objects.length; i++) {
+			let obj = objects[i];
+			let text_tr = "";
+			for (let j = 0; j < selected_fields.length; j++) {
+				let value = obj[selected_fields[j]];
+				text_tr += "<td>" + value + "</td>";
+			}
+			text_tr = "<tr>" + text_tr + "</tr>";
+			text_tbody += text_tr;
+		}
+		text_tbody = "<tbody>" + text_tbody + "</tbody>";
+		
+		let inn = '<div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Item Logs</h6></div><div class="card-body" style="font-size:0.750em;"><div class="table-responsive"><table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">' + text_thead + text_tbody + '</table></div></div>';
+		document.getElementById("card-data").innerHTML = inn;
+		
+		$('#dataTable').DataTable();
+	}
+	
+	/*if (objects.length > 0) {
+		
+	} else {
+		
+	}*/
+}
+
+callAPI();
+retrive_item_logs();
+
 </script>
+
 </body>
 
 </html>
