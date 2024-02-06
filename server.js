@@ -14,14 +14,14 @@ let envsCfg = [
 		"name": "dev",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
-		"basicAuth": "dng3alJaZldnbUQ3MUtmNWI2YWRrTHZJQzNnYTprb2o5TzhFNVVyemJfSUpXSEFWdGxrSXNiZllh",
+		"basicAuth": "dF9kMjZWc3NGSHdXYnJuVUlzVWViRWhLVnJrYTpUdl9EZllVbkpLa3lHSENXTXpxS3dwWTNIVDhh",
 		"backgroundColor": "#efefef"
 	},
 	{
 		"name": "qas",
 		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
 		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
-		"basicAuth": "SlZhVU9acTU5RkJtU1FrbEdsSV9lS2QzWWNzYTpDQ0RNOTNwSW1yRjRCTks1Z1Z5dEdFTG9RTm9h",
+		"basicAuth": "eVNEU0swNW41aFhmbEhhbkdOa0d5TlFsWUVNYTpJcmpES1R2ZmdNOEJHdjVZb2ZaZkNYOWZMdGNh",
 		"backgroundColor": "#ffffff"
 	},
 	{
