@@ -78,7 +78,7 @@ document.getElementById("btn_cancel").setAttribute("onclick", "location.href='ht
 const loadData = async () => {
 
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/" + scheduleName;
+	let url = "{api_endpoint}/workspaces/default/schedules/" + scheduleName;
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
@@ -131,7 +131,7 @@ function callAPI() {
 	};
 	
 	let result_status_code = -1;
-    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules/' + scheduleName + '/patching', {
+    fetch('{api_endpoint}/workspaces/default/schedules/' + scheduleName + '/patching', {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",

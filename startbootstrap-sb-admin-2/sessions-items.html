@@ -32,7 +32,7 @@ const callAPI = async () => {
 	
 
 	// get parent schedule
-	let url_00 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + sessionId;
+	let url_00 = "{api_endpoint}/workspaces/default/sessions/" + sessionId;
 	const response_00 = await fetch(url_00, {
 		method: 'GET',
 		headers: {
@@ -55,7 +55,7 @@ const callAPI = async () => {
 
 	
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + sessionId + "/items";
+	let url = "{api_endpoint}/workspaces/default/sessions/" + sessionId + "/items";
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {

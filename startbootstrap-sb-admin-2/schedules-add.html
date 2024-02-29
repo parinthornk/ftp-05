@@ -111,7 +111,7 @@ function callAPI() {
 	
 	let statusCode = -1;
 
-    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules', {
+    fetch('{api_endpoint}/workspaces/default/schedules', {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",

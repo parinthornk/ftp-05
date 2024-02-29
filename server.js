@@ -111,7 +111,11 @@ function replace_url_ref (env, _m) {
 	}
 	__m = __m.replaceAll("{replace_with_bgcolor}", env_get_backgroundColor(env));
 	let ret_1 = __m.replaceAll("http://localhost:3000/v20", "http://localhost:3000/v20/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app/v20", "https://squid-app-o8e56.ondigitalocean.app/v20/" + env);
-	ret_1 = ret_1.replaceAll("{api_endpoint}", env_get_endpointAPI(env));
+	
+	let env_endpoint = env_get_endpointAPI(env);
+	console.log("env_endpoint: env_get_endpointAPI(" + env + "): " + env_endpoint);
+	
+	ret_1 = ret_1.replaceAll("{api_endpoint}", env_endpoint);
 	return ret_1;
 }
 
@@ -259,6 +263,8 @@ app.all('/:env/sites', (req, response) => {
 	
 	let requested_env = req.params.env;
 	
+	console.log("/" + requested_env + "/sites");
+	
 	let filePath = "startbootstrap-sb-admin-2/sites.html";
 	
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
@@ -266,7 +272,7 @@ app.all('/:env/sites', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -294,7 +300,7 @@ app.all('/:env/schedules', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -322,7 +328,7 @@ app.all('/:env/schedules-add', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -352,7 +358,7 @@ app.all('/:env/schedules/:schedule/edit', (req, response) => {
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -383,7 +389,7 @@ app.all('/:env/schedules/:schedule', (req, response) => {
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -414,7 +420,7 @@ app.all('/:env/schedules/:schedule/sessions', (req, response) => {
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -443,7 +449,7 @@ app.all('/:env/events', (req, response) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -474,7 +480,7 @@ app.all('/:env/sessions/:session/items', (req, response) => {
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -506,7 +512,7 @@ app.all('/:env/sessions/:session/items/:item', (req, response) => {
 				data_with_token = data_with_token.replace("{item}", req.params.item);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -535,7 +541,7 @@ app.all('/:env/items-summary', (req, response) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -567,7 +573,7 @@ app.all('/:env/schedules/:schedule/sessions/:session', (req, response) => {
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -763,7 +769,7 @@ app.get('/v20/:env/items-summary', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -782,6 +788,11 @@ app.get('/v20/:env/items-summary', (req, response) => {
 
 app.get('/v20/:env/sites', (req, response) => {
 	let requested_env = req.params.env;
+	
+	
+	
+	console.log("/v20/" + requested_env + "/sites");
+	
 	let filePath = "startbootstrap-sb-admin-2/sites.html";
 	fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data){
 		if (!err) {
@@ -813,7 +824,7 @@ app.get('/v20/:env/schedules', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -840,7 +851,7 @@ app.get('/v20/:env/sessions/:session/items/:item', (req, response) => {
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				data_with_token = data_with_token.replace("{item}", req.params.item);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -871,7 +882,7 @@ app.all('/v20/:env/schedules/:schedule', (req, response) => {
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -902,7 +913,7 @@ app.all('/v20/:env/schedules/:schedule/sessions', (req, response) => {
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -933,7 +944,7 @@ app.all('/v20/:env/sessions/:session/items', (req, response) => {
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -961,7 +972,7 @@ app.all('/v20/:env/schedules-add', (req, response) => {
 			get_token(requested_env, (token) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -991,7 +1002,7 @@ app.all('/v20/:env/schedules/:schedule/edit', (req, response) => {
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				data_with_token = data_with_token.replace("{schedule}", req.params.schedule);
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -1023,7 +1034,7 @@ app.all('/v20/:env/schedules/:schedule/sessions/:session', (req, response) => {
 				data_with_token = data_with_token.replace("{session}", req.params.session);
 				
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);
@@ -1052,7 +1063,7 @@ app.all('/v20/:env/events', (req, response) => {
 				let data_with_token = data.replace("{access_token}", token["access_token"]);
 				data_with_token = replace_url_ref(requested_env, data_with_token);
 				
-				console.log(data_with_token);
+				//console.log(data_with_token);
 				response.setHeader('Content-Type', 'text/html');
 				response.status(200);
 				response.end(data_with_token);

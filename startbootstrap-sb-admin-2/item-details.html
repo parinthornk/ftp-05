@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>OR | Common FTP</title>
+    <title>OR_COM_FileTransferService_WEB | Common FTP</title>
 
     <!-- Custom fonts for this template -->
     <link href="http://localhost:3000/libs/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -450,7 +450,7 @@ const re_execute = function() {
 		document.getElementById("btn_re_execute").disabled = true;
 
 		let r_code = -1;
-		fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
+		fetch('{api_endpoint}/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
 			method: 'POST',
 			headers: {
 				"Content-Type": "application/json",
@@ -479,7 +479,7 @@ const on_r_code = function(r_code, r_tmp) {
 const callAPI = async () => {
 	
 	/*// get parent schedule
-	let url_00 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	let url_00 = "{api_endpoint}/workspaces/default/sessions/" + session;
 	const response_00 = await fetch(url_00, {
 		method: 'GET',
 		headers: {
@@ -490,7 +490,7 @@ const callAPI = async () => {
 	let schedule = myJson_00["schedule"];*/
 	
 	// load item details
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session + "/items/" + item;
+	let url = "{api_endpoint}/workspaces/default/sessions/" + session + "/items/" + item;
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
@@ -575,7 +575,7 @@ const callAPI = async () => {
 }
 
 const retrive_item_logs = async () => {
-	let url_01 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items/" + item + "/logs";
+	let url_01 = "{api_endpoint}/workspaces/default/items/" + item + "/logs";
 	
 	const response_01 = await fetch(url_01, {
 		method: 'GET',
