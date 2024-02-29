@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>WTRANSFER | Item</title>
+  <title>OR_COM_FileTransferService_WEB | Item</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -279,7 +279,7 @@ let callAPI = async (url_00) => {
 		
 		// load sessions, TODO
 		{
-			const response_01 = await fetch("https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/schedules", {
+			const response_01 = await fetch("{api_endpoint}/workspaces/default/schedules", {
 				method: 'GET',
 				headers: {
 					"Authorization": "Bearer " + token
@@ -567,7 +567,7 @@ function submit_request() {
 		text_query_file_name = "&file_name=" + text_query_file_name;
 	}
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description + text_query_file_name;
+	let url = "{api_endpoint}/workspaces/default/items?time_start=" + t_api_from + "&time_stop=" + t_api_to + "&status=" + arr_status + text_query_description + text_query_file_name;
 	
 	
 	callAPI(url);

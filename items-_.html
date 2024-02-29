@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>WTRANSFER | Item</title>
+  <title>OR_COM_FileTransferService_WEB | Item</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -46,7 +46,7 @@ const re_execute = function() {
 	document.getElementById("btn_re_execute").disabled = true;
 
 	let r_code = -1;
-    fetch('https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
+    fetch('{api_endpoint}/workspaces/default/sessions/' + session + '/items/' + item + '/re-execute', {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",
@@ -79,7 +79,7 @@ const on_r_code = function(r_code, r_tmp) {
 const callAPI = async () => {
 	
 	// get parent schedule
-	let url_00 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	let url_00 = "{api_endpoint}/workspaces/default/sessions/" + session;
 	const response_00 = await fetch(url_00, {
 		method: 'GET',
 		headers: {
@@ -101,7 +101,7 @@ const callAPI = async () => {
 	document.getElementById("refth004").setAttribute("href", "http://localhost:3000" + "/sessions/" + session + "/items");
 	
 	document.getElementById("refth005").innerHTML = item;
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session + "/items/" + item;
+	let url = "{api_endpoint}/workspaces/default/sessions/" + session + "/items/" + item;
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
@@ -171,7 +171,7 @@ const callAPI = async () => {
 
 
 const retrive_item_logs = async () => {
-	let url_01 = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/items/" + item + "/logs";
+	let url_01 = "{api_endpoint}/workspaces/default/items/" + item + "/logs";
 	
 	const response_01 = await fetch(url_01, {
 		method: 'GET',

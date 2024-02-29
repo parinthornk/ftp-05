@@ -33,9 +33,9 @@ let envsCfg = [
 	},
 	{
 		"name": "prd",
-		"endpointToken": "https://orapi-dev.orplc.com/oauth2/token",
-		"endpointAPI": "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0",
-		"basicAuth": "xxxx",
+		"endpointToken": "https://orapi-prd.orplc.com/oauth2/token",
+		"endpointAPI": "https://orapigw-ex-prd.orplc.com:443/OR_COM_FileTransferService_WEB/1.0.0",
+		"basicAuth": "RmRsaGZ4WDFhbl9LWm1FZkFjaU1sNGltZnZzYTpOWXg2Wk0zOWVaUVNHX1gyU2VQeFdjU3duZVFh",
 		"backgroundColor": "#ffffff"
 	}
 ];
@@ -110,7 +110,9 @@ function replace_url_ref (env, _m) {
 		}
 	}
 	__m = __m.replaceAll("{replace_with_bgcolor}", env_get_backgroundColor(env));
-	return __m.replaceAll("http://localhost:3000/v20", "http://localhost:3000/v20/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app/v20", "https://squid-app-o8e56.ondigitalocean.app/v20/" + env);
+	let ret_1 = __m.replaceAll("http://localhost:3000/v20", "http://localhost:3000/v20/" + env).replaceAll("https://squid-app-o8e56.ondigitalocean.app/v20", "https://squid-app-o8e56.ondigitalocean.app/v20/" + env);
+	ret_1 = ret_1.replaceAll("{api_endpoint}", env_get_endpointAPI(env));
+	return ret_1;
 }
 
 // ---------------------------------------------------------------------------------------- read host end

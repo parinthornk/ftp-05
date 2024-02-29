@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>WTRANSFER | Schedules</title>
+  <title>OR_COM_FileTransferService_WEB | Schedules</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -46,7 +46,7 @@ const callAPI = async () => {
 	
 	//document.getElementById("head-schedule").innerHTML = " / <a href=\"http://localhost:3000/schedules" + "\">schedules</a> / <a href=\"http://localhost:3000/schedules/" + scheduleName + "\">" + scheduleName + "</a>";
 	
-	let url = "https://orapigw-ex-dev.orplc.com/wtransfer/1.0.0/workspaces/default/sessions/" + session;
+	let url = "{api_endpoint}/workspaces/default/sessions/" + session;
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
